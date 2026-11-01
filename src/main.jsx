@@ -12,7 +12,6 @@ import {
   Compass,
   Leaf,
   Menu,
-  MoveUpRight,
   ShieldCheck,
   Sparkles,
   Sun,
@@ -110,8 +109,10 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div', ...props
 
 function Intro({ onEnter }) {
   const [leaving, setLeaving] = useState(false);
+  const leaveStarted = useRef(false);
   const enter = () => {
-    if (leaving) return;
+    if (leaveStarted.current) return;
+    leaveStarted.current = true;
     setLeaving(true);
     window.setTimeout(onEnter, 700);
   };
