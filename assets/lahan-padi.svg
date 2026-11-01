@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Lanskap tanaman padi</title>
+  <desc id="desc">Ilustrasi lembut petak sawah dengan padi keemasan dan bukit di kejauhan.</desc>
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#d9e8e4"/><stop offset="1" stop-color="#f5ebd2"/></linearGradient>
+    <linearGradient id="field" x2="0" y2="1"><stop stop-color="#b9c68b"/><stop offset="1" stop-color="#788c62"/></linearGradient>
+    <linearGradient id="rice" x2="0" y2="1"><stop stop-color="#dfca87"/><stop offset="1" stop-color="#b19456"/></linearGradient>
+  </defs>
+  <rect width="1000" height="1200" fill="url(#sky)"/>
+  <circle cx="770" cy="210" r="78" fill="#f2d89e" opacity=".8"/>
+  <path d="M0 520c175-145 293-71 438-165 141-92 274-44 562 51v260H0Z" fill="#a8b99c"/>
+  <path d="M0 630c173-107 316-27 452-98 186-98 365-43 548 28v253H0Z" fill="#8da984"/>
+  <path d="M0 745c196-51 355-30 523 19 189 55 310 41 477-9v445H0Z" fill="url(#field)"/>
+  <path d="M0 851c207-46 361-12 533 31 182 46 308 40 467-2M0 1007c207-38 370-9 542 31 174 41 297 35 458 0M0 1145c213-23 382-2 550 30 173 33 301 23 450-7" fill="none" stroke="#d5d8a4" stroke-width="9" opacity=".65"/>
+  <g fill="none" stroke="url(#rice)" stroke-linecap="round" stroke-width="6" opacity=".82">
+    <path d="M171 917V720m0 113-41-44m41 12 41-62m-41 123 48-31m-48 54-39-29"/><path d="M294 884V698m0 105-37-41m37 9 39-56m-39 112 46-28m-46 49-36-26"/><path d="M782 895V708m0 110-38-44m38 12 40-57m-40 116 47-31m-47 52-36-29"/><path d="M884 866V692m0 103-36-40m36 10 38-54m-38 111 45-27m-45 47-34-25"/>
+  </g>
+  <g fill="#f7f2df" opacity=".7"><path d="M105 250c8-30 38-43 64-29 17-39 73-32 84 9 30-3 45 34 22 54H133c-25 0-38-17-28-34Z"/><path d="M404 348c7-23 29-34 50-23 14-29 56-23 64 7 23-2 34 27 16 42h-112c-19 0-28-13-18-26Z"/></g>
+  <rect y="1179" width="1000" height="21" fill="#cbb176" opacity=".45"/>
+</svg>

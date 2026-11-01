@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Ruang untuk ide</title>
+  <desc id="desc">Ilustrasi meja kerja berisi sketsa mesin sederhana, buku catatan, pensil, dan pot tanaman.</desc>
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#e4ece4"/><stop offset="1" stop-color="#f5f0df"/></linearGradient>
+    <linearGradient id="desk" x2="0" y2="1"><stop stop-color="#c6aa7c"/><stop offset="1" stop-color="#a78963"/></linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#wall)"/>
+  <circle cx="954" cy="171" r="105" fill="#f1dca7" opacity=".8"/>
+  <rect x="95" y="93" width="445" height="300" rx="8" fill="#f7f6ec" stroke="#cbd7cb" stroke-width="10"/>
+  <path d="M125 333c85-78 167-83 244-25 45 34 92 25 144-17" fill="none" stroke="#86a48b" stroke-width="9" stroke-linecap="round"/>
+  <path d="M125 355c89-40 165-35 235-5" fill="none" stroke="#d7b87a" stroke-width="7" stroke-linecap="round"/>
+  <rect y="518" width="1200" height="282" fill="url(#desk)"/>
+  <path d="M112 559h578v-30H112z" fill="#ddc89b" opacity=".65"/>
+  <rect x="147" y="416" width="340" height="214" rx="7" fill="#fbfaf4" transform="rotate(-3 147 416)"/>
+  <rect x="179" y="447" width="274" height="5" rx="2" fill="#d5ded2" transform="rotate(-3 179 447)"/>
+  <rect x="176" y="473" width="212" height="5" rx="2" fill="#d5ded2" transform="rotate(-3 176 473)"/>
+  <path d="M214 566h193M231 541v64m142-64v64m-142-41h142m-142 23h142" fill="none" stroke="#73928c" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="300" cy="551" r="18" fill="#f2d89e" stroke="#73928c" stroke-width="5"/>
+  <rect x="609" y="409" width="31" height="195" rx="12" fill="#d3a76a" transform="rotate(12 609 409)"/>
+  <path d="m640 406 19 3-10 29z" fill="#66766e"/>
+  <rect x="776" y="437" width="207" height="198" rx="11" fill="#f8f6e8" stroke="#d9ddcf" stroke-width="7"/>
+  <path d="M819 543c36-48 83-47 122 0m-128 36h143m-141 21h118" fill="none" stroke="#8ea994" stroke-width="7" stroke-linecap="round"/>
+  <path d="M846 522v-38m0 22-17-15m17 9 17-17m-17 32 19-9" fill="none" stroke="#b39458" stroke-width="5" stroke-linecap="round"/>
+  <path d="M1040 474h102l-14 145h-76z" fill="#b7a982"/><path d="M1089 474c-8-64-56-49-52-108m54 108c0-67 42-77 28-129m-30 129c17-50-8-70-34-86" fill="none" stroke="#708c71" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="1090" cy="470" rx="66" ry="13" fill="#d1bc88"/>
+  <path d="M0 763h1200" stroke="#8b704e" stroke-width="8" opacity=".35"/>
+</svg>
