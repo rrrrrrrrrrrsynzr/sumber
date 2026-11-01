@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowDown,
@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import './styles.css';
+import './intro-motion.css';
 
 const asset = (filename) => `${import.meta.env.BASE_URL}assets/${filename}`;
 
@@ -78,9 +79,7 @@ const facts = [
 function BrandMark({ large = false }) {
   return (
     <span className={`brand-mark${large ? ' brand-mark-large' : ''}`} aria-hidden="true">
-      <span className="brand-mark-orbit" />
       <span className="brand-mark-center"><Leaf size={large ? 34 : 18} strokeWidth={1.6} /></span>
-      <span className="brand-mark-glint" />
     </span>
   );
 }
@@ -107,29 +106,77 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div', ...props
   return <Tag ref={ref} className={`reveal ${className}`} style={{ '--reveal-delay': `${delay}ms` }} {...props}>{children}</Tag>;
 }
 
-function Intro({ onEnter }) {
-  const [leaving, setLeaving] = useState(false);
+function LoadingScreen({ onComplete }) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const duration = reducedMotion ? 250 : 1550;
+    let lastProgress = -1;
+    const start = performance.now();
+
+    const updateProgress = () => {
+      const progressRatio = Math.min((performance.now() - start) / duration, 1);
+      const eased = 1 - ((1 - progressRatio) ** 3);
+      const nextProgress = Math.round(eased * 100);
+      if (nextProgress !== lastProgress) {
+        lastProgress = nextProgress;
+        setProgress(nextProgress);
+      }
+    };
+
+    const progressTimer = window.setInterval(updateProgress, 32);
+    const completionTimer = window.setTimeout(() => {
+      window.clearInterval(progressTimer);
+      setProgress(100);
+      onComplete();
+    }, duration + (reducedMotion ? 100 : 280));
+
+    return () => {
+      window.clearInterval(progressTimer);
+      window.clearTimeout(completionTimer);
+    };
+  }, [onComplete]);
+
+  return (
+    <div className="intro splash-loader" role="status" aria-label="Menyiapkan pameran">
+      <div className="loader-sky" aria-hidden="true"><span className="loader-sun" /><span className="loader-horizon" /><span className="loader-spark spark-left" /><span className="loader-spark spark-right" /></div>
+      <div className="loader-content">
+        <div className="loader-symbol"><BrandMark large /><span className="loader-ring loader-ring-one" /><span className="loader-ring loader-ring-two" /></div>
+        <p className="loader-overline">PRAKARSA DARI SMPN 4 PAKEM</p>
+        <p className="loader-title">Menyiapkan cerita<span>.</span></p>
+        <p className="loader-caption">Sawah, ide, dan sedikit keajaiban teknologi.</p>
+        <div className="loader-progress" role="progressbar" aria-label="Progres persiapan pameran" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}><span style={{ '--loader-progress': `${progress}%` }} /></div>
+        <div className="loader-status"><span>MERAPIKAN PANGGUNG PAMERAN</span><b>{String(progress).padStart(2, '0')}%</b></div>
+      </div>
+      <div className="loader-ground" aria-hidden="true"><span /><span /></div>
+    </div>
+  );
+}
+
+function Intro({ onEnter, transitioning }) {
   const leaveStarted = useRef(false);
   const enter = () => {
     if (leaveStarted.current) return;
     leaveStarted.current = true;
-    setLeaving(true);
-    window.setTimeout(onEnter, 700);
+    onEnter();
   };
   useEffect(() => {
-    const timer = window.setTimeout(enter, 4200);
+    const timer = window.setTimeout(enter, 5300);
     return () => window.clearTimeout(timer);
   }, []);
 
   return (
-    <div className={`intro${leaving ? ' is-leaving' : ''}`} aria-label="Animasi pembuka Pradnyasiwi Quadtech">
-      <div className="intro-field intro-field-back" />
-      <div className="intro-field intro-field-front" />
-      <div className="intro-orbit orbit-one" /><div className="intro-orbit orbit-two" />
-      <div className="intro-sun"><span /></div>
-      <div className="intro-cloud cloud-one" /><div className="intro-cloud cloud-two" />
+    <div className={`intro brand-intro${transitioning ? ' intro--transitioning' : ''}`} aria-label="Animasi pembuka Pradnyasiwi Quadtech" aria-hidden={transitioning}>
+      <div className="intro-scenery" aria-hidden="true"><span className="intro-sun" /><span className="intro-sun-glow" /><span className="intro-hill hill-back" /><span className="intro-hill hill-front" /><span className="intro-cloud cloud-one" /><span className="intro-cloud cloud-two" /><span className="intro-grass grass-one" /><span className="intro-grass grass-two" /></div>
       <div className="intro-content">
-        <div className="intro-logo"><BrandMark large /></div>
+        <div className="intro-logo-stage">
+          <span className="logo-orbit orbit-outer" aria-hidden="true"><i /></span>
+          <span className="logo-orbit orbit-inner" aria-hidden="true"><i /></span>
+          <span className="orbit-spark orbit-spark-one" aria-hidden="true"><Sparkles size={13} /></span>
+          <span className="orbit-spark orbit-spark-two" aria-hidden="true"><Sun size={12} /></span>
+          <div className="school-emblem" aria-label="Logo ilustrasi Pradnyasiwi Quadtech"><BrandMark large /><span className="emblem-highlight" /></div>
+        </div>
         <p className="intro-kicker">SMP NEGERI 4 PAKEM MEMPERSEMBAHKAN</p>
         <h1>Pradnyasiwi <span>Quadtech</span></h1>
         <p className="intro-caption">Inovasi kecil, semangat besar untuk pertanian Sleman.</p>
@@ -137,6 +184,7 @@ function Intro({ onEnter }) {
       </div>
       <p className="intro-footnote">Sebuah cerita dari Pakem, Yogyakarta <span>·</span> <b>STEM 2026</b></p>
       <button className="intro-skip" type="button" onClick={enter}>Lewati intro <ArrowRight size={13} /></button>
+      <span className="transition-flare" aria-hidden="true" />
     </div>
   );
 }
@@ -306,16 +354,30 @@ function Footer() {
 }
 
 function App() {
-  const [introDone, setIntroDone] = useState(false);
+  const [phase, setPhase] = useState('loading');
+  const completeLoading = useCallback(() => setPhase('intro'), []);
+  const startTransition = useCallback(() => setPhase('transition'), []);
+
   useEffect(() => {
-    if (!introDone) return undefined;
-    document.body.classList.remove('intro-pending');
+    if (phase === 'home') {
+      document.body.classList.remove('intro-pending');
+      return undefined;
+    }
+    document.body.classList.add('intro-pending');
     return undefined;
-  }, [introDone]);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'transition') return undefined;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const timer = window.setTimeout(() => setPhase('home'), prefersReducedMotion ? 100 : 1100);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
 
   return <>
-    {!introDone && <Intro onEnter={() => setIntroDone(true)} />}
-    <div className={`site-shell${introDone ? ' is-visible' : ''}`} aria-hidden={!introDone}>
+    {phase === 'loading' && <LoadingScreen onComplete={completeLoading} />}
+    {(phase === 'intro' || phase === 'transition') && <Intro onEnter={startTransition} transitioning={phase === 'transition'} />}
+    <div className={`site-shell${phase === 'transition' || phase === 'home' ? ' is-visible' : ''}${phase === 'transition' ? ' is-revealing' : ''}`} aria-hidden={phase !== 'transition' && phase !== 'home'} inert={phase !== 'home'}>
       <Header />
       <main><Hero /><DeviceSection /><StorySection /><BenefitsSection /><StepsSection /><GallerySection /><SourcesSection /><BehindScenes /></main>
       <Footer />

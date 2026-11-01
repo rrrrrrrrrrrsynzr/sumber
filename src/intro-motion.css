@@ -1,0 +1,282 @@
+/* Intro/loading choreography — standalone so the school mark and its orbit remain easy to replace independently. */
+.splash-loader,
+.brand-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.splash-loader::before,
+.splash-loader::after,
+.brand-intro::before,
+.brand-intro::after { content: none; }
+
+.splash-loader {
+  color: #214456;
+  background: #e8eee8;
+  animation: loader-scene-arrive 650ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.loader-sky,
+.intro-scenery {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.loader-sky {
+  background: linear-gradient(180deg,#d2e7ed 0%,#edf0e3 68%,#f2e5c4 100%);
+  animation: loader-sky-breathe 5s ease-in-out infinite alternate;
+}
+
+.loader-sun {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  width: clamp(75px, 12vw, 130px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff0bf;
+  box-shadow: 0 0 0 16px #fff3d530, 0 0 90px 35px #f4d78c75;
+  transform: translateX(-50%);
+  animation: loader-sun-rise 1.25s .08s cubic-bezier(.16,1,.3,1) both, loader-sun-pulse 4s 1.4s ease-in-out infinite;
+}
+
+.loader-horizon {
+  position: absolute;
+  left: -12%;
+  bottom: 14%;
+  width: 124%;
+  height: 18%;
+  border-radius: 50%;
+  background: #a9c49f;
+  transform: rotate(-4deg) translateY(30px);
+  opacity: 0;
+  animation: loader-horizon-arrive 900ms .25s cubic-bezier(.2,.7,.2,1) forwards;
+}
+
+.loader-horizon::after {
+  position: absolute;
+  content: "";
+  left: -2%;
+  top: 58%;
+  width: 106%;
+  height: 100%;
+  border-radius: 50%;
+  background: #708c70;
+  transform: rotate(7deg);
+}
+
+.loader-spark {
+  position: absolute;
+  top: 30%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff5d5;
+  box-shadow: 0 0 15px 4px #fff0c966;
+  animation: loader-sparkle 1.8s ease-in-out infinite alternate;
+}
+
+.spark-left { left: 22%; animation-delay: .4s; }
+.spark-right { right: 24%; top: 37%; animation-delay: 1s; }
+
+.loader-ground {
+  position: absolute;
+  inset: auto 0 0;
+  height: 15%;
+  overflow: hidden;
+}
+
+.loader-ground span {
+  position: absolute;
+  bottom: 12px;
+  left: 8%;
+  width: 1px;
+  height: 38px;
+  background: #6b8869;
+  transform: rotate(-14deg);
+  transform-origin: bottom;
+  animation: seedling-wave 2.7s ease-in-out infinite alternate;
+}
+
+.loader-ground span::before,
+.loader-ground span::after {
+  position: absolute;
+  content: "";
+  top: 11px;
+  left: -9px;
+  width: 10px;
+  height: 5px;
+  border-radius: 100% 0;
+  background: #6b8869;
+  transform: rotate(-28deg);
+}
+
+.loader-ground span::after { top: 20px; left: 0; transform: scaleX(-1) rotate(-22deg); }
+.loader-ground span:last-child { left: auto; right: 10%; height: 49px; animation-delay: -.8s; }
+
+.loader-content {
+  position: relative;
+  z-index: 2;
+  width: min(320px, calc(100vw - 48px));
+  margin-top: 40px;
+  text-align: center;
+  animation: loader-content-arrive 800ms .16s cubic-bezier(.16,1,.3,1) both;
+}
+
+.loader-symbol {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto 28px;
+}
+
+.loader-symbol .brand-mark-large { width: 82px; height: 82px; margin: 0; box-shadow: 0 0 0 8px #fff5, 0 12px 35px #345d5722; }
+.loader-symbol .brand-mark-large .brand-mark-center svg { width: 28px; height: 28px; }
+
+.loader-ring {
+  position: absolute;
+  inset: 1px;
+  border: 1px solid #fff9;
+  border-radius: 50%;
+}
+
+.loader-ring::after {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  content: "";
+  border: 2px solid #f7f0db;
+  border-radius: 50%;
+  background: #71917f;
+  box-shadow: 0 0 12px #fff3c9;
+}
+
+.loader-ring-one { animation: orbit-spin 2.5s linear infinite; }
+.loader-ring-two { inset: 12px; border-style: dashed; opacity: .8; animation: orbit-spin 6s linear infinite reverse; }
+.loader-ring-two::after { top: 4px; width: 4px; height: 4px; background: #d3ac5d; }
+.loader-overline { margin: 0 0 9px; color: #627c7a; font-size: 8px; font-weight: 700; letter-spacing: .2em; }
+.loader-title { margin: 0; color: #214456; font: 800 24px/1.2 var(--display); letter-spacing: -.055em; }
+.loader-title span { color: #769887; animation: loading-dot 950ms ease-in-out infinite alternate; }
+.loader-caption { margin: 8px 0 24px; color: #71817e; font-size: 10px; }
+.loader-progress { height: 2px; overflow: hidden; background: #ffffff9e; }
+.loader-progress span { display: block; width: var(--loader-progress, 0%); height: 100%; background: #527d79; transition: width 80ms linear; }
+.loader-status { display: flex; justify-content: space-between; margin-top: 9px; color: #71837c; font-size: 7px; font-weight: 700; letter-spacing: .11em; }
+.loader-status b { color: #466c6c; font-size: 8px; font-variant-numeric: tabular-nums; }
+
+.brand-intro {
+  background: linear-gradient(180deg,#c8e5ee 0%,#e8f0e9 59%,#f6e8c5 100%);
+  clip-path: inset(0);
+  transition: clip-path 1s cubic-bezier(.76,0,.24,1), opacity .9s ease;
+}
+
+.intro-scenery { opacity: 0; animation: scenery-arrive 1s .12s ease forwards; }
+.intro-sun { position: absolute; top: 10%; left: 50%; z-index: 0; width: clamp(112px, 14vw, 164px); aspect-ratio: 1; border-radius: 50%; background: #fff0bd; box-shadow: 0 0 0 25px #fff3d522, 0 0 100px 40px #f4d78c80; transform: translateX(-50%) scale(.8); animation: intro-sun-arrive 1.5s .08s cubic-bezier(.16,1,.3,1) forwards, loader-sun-pulse 4s 1.6s ease-in-out infinite; }
+.intro-sun-glow { position: absolute; top: 7%; left: 50%; width: min(66vw,760px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle,#fff6cf32 0,transparent 67%); transform: translateX(-50%); }
+.intro-hill { position: absolute; left: -12%; width: 124%; height: 22%; bottom: -13%; border-radius: 50% 50% 0 0; }
+.hill-back { background: #a9c9a0; transform: rotate(-5deg) translateY(35px); animation: hill-arrive 1.2s .18s cubic-bezier(.2,.7,.2,1) forwards; }
+.hill-front { bottom: -23%; background: #718c6d; transform: rotate(3deg) translateY(35px); animation: hill-arrive 1.35s .28s cubic-bezier(.2,.7,.2,1) forwards; }
+.intro-cloud { position: absolute; top: 27%; left: 12%; width: 120px; height: 23px; border-radius: 20px; background: #fff9; opacity: 0; animation: cloud-appear 700ms .55s ease forwards, cloud-drift 17s 1.3s ease-in-out infinite; }
+.intro-cloud::before,.intro-cloud::after { position:absolute; content:""; background:inherit; border-radius:50%; width:48px; height:39px; left:17px; top:-16px; }
+.intro-cloud::after { left:58px; top:-9px; width:39px; height:31px; }
+.cloud-two { left:auto; top:37%; right:10%; transform:scale(.7); animation-delay: .8s, 2s; animation-direction:normal,reverse; animation-duration:700ms,22s; }
+.intro-content { position:relative; z-index:2; padding:24px; margin-top:34px; text-align:center; animation:intro-content-arrive 850ms .28s cubic-bezier(.16,1,.3,1) both; }
+.intro-logo-stage { position:relative; display:grid; place-items:center; width:184px; height:184px; margin:0 auto 14px; }
+.school-emblem { position:relative; z-index:2; display:grid; place-items:center; width:102px; height:102px; border:1px solid #ffffffdd; border-radius:50%; background:#fffdf3e8; box-shadow:0 10px 38px #315c5a26, inset 0 0 0 7px #fff9; animation:emblem-breathe 4s ease-in-out infinite; }
+.school-emblem .brand-mark-large { width:66px; height:66px; margin:0; background:transparent; box-shadow:none; }
+.school-emblem .brand-mark-large::after { inset:6px; }
+.school-emblem .brand-mark-large .brand-mark-center { color:#59836e; }
+.school-emblem .brand-mark-large .brand-mark-center svg { width:31px; height:31px; }
+.emblem-highlight { position:absolute; inset:6px; border-radius:50%; background:linear-gradient(135deg,#fff9 0%,transparent 42%); pointer-events:none; }
+.logo-orbit { position:absolute; left:50%; top:50%; display:block; border:1px solid #fff9; border-radius:50%; transform:translate(-50%,-50%); }
+.orbit-outer { width:176px; height:108px; animation:logo-orbit-rotate 6s linear infinite; }
+.orbit-inner { width:150px; height:150px; border-color:#fff8; border-style:dashed; animation:logo-orbit-rotate 15s linear infinite reverse; }
+.logo-orbit i { position:absolute; top:50%; left:-5px; width:10px; height:10px; border:2px solid #fff4dc; border-radius:50%; background:#d2a84e; box-shadow:0 0 12px #fff8; transform:translateY(-50%); }
+.orbit-inner i { top:50%; left:auto; right:-4px; width:7px; height:7px; background:#6b9581; }
+.orbit-spark { position:absolute; z-index:3; display:grid; place-items:center; color:#f7e5ac; filter:drop-shadow(0 1px 5px #44675c66); }
+.orbit-spark-one { top:18px; right:37px; animation:spark-float 2.2s ease-in-out infinite alternate; }
+.orbit-spark-two { bottom:26px; left:28px; animation:spark-float 2.7s .4s ease-in-out infinite alternate-reverse; }
+.intro-content .intro-kicker { margin:0 0 11px; color:#58757a; font-size:9px; letter-spacing:.16em; font-weight:700; text-transform:uppercase; animation:text-rise .65s .55s both; }
+.intro-content h1 { margin:0; color:#193e57; font:800 clamp(36px,6vw,65px)/1.08 var(--display); letter-spacing:-.06em; animation:text-rise .7s .65s both; }
+.intro-content h1 span { display:block; color:#528a89; }
+.intro-content .intro-caption { margin:13px 0 23px; color:#627d81; font-size:13px; animation:text-rise .7s .76s both; }
+.intro-enter { display:inline-flex; align-items:center; gap:17px; border:1px solid #fff; border-radius:40px; padding:13px 18px 13px 21px; background:#fff; color:#355f6d; font-size:11px; font-weight:700; box-shadow:0 7px 25px #3376a51a; cursor:pointer; transition:transform .2s,box-shadow .2s; animation:text-rise .7s .88s both; }
+.intro-enter:hover { transform:translateY(-3px); box-shadow:0 12px 30px #3376a533; }
+.intro-enter svg { color:#578c90; }
+.intro-footnote { position:absolute; z-index:2; bottom:20px; margin:0; color:#f5f8ee; font-size:9px; letter-spacing:.08em; text-shadow:0 1px 5px #273c39; opacity:0; animation:text-rise .65s .95s forwards; }
+.intro-footnote span { margin-inline:7px; }
+.intro-footnote b { font-weight:700; }
+.intro-skip { position:absolute; z-index:4; top:24px; right:28px; display:flex; align-items:center; gap:9px; padding:8px 11px; border:1px solid #fff7; border-radius:22px; background:#ffffff45; color:#41666a; font-size:10px; cursor:pointer; opacity:0; animation:fade-in .5s 1s forwards; }
+.transition-flare { position:fixed; z-index:5; left:50%; top:46%; width:14px; height:14px; border-radius:50%; background:#fff9dc; box-shadow:0 0 0 0 #fff8d8,0 0 0 0 #fff8d855; opacity:0; transform:translate(-50%,-50%) scale(.3); pointer-events:none; }
+
+/* The emblem and orbit are separate DOM layers: drop in the school's real badge without redrawing the orbital accents. */
+.site-shell.is-revealing { animation:home-iris-open 1.12s cubic-bezier(.76,0,.24,1) both; }
+.intro--transitioning { pointer-events:none; animation:intro-iris-close 1.12s cubic-bezier(.76,0,.24,1) both; }
+.intro--transitioning .intro-logo-stage { animation:brand-launch 950ms cubic-bezier(.16,1,.3,1) both; }
+.intro--transitioning .school-emblem { animation:emblem-launch 880ms cubic-bezier(.16,1,.3,1) both; }
+.intro--transitioning .logo-orbit { animation-duration:850ms; }
+.intro--transitioning .transition-flare { animation:transition-flash 920ms ease-out both; }
+.intro--transitioning .intro-content > :not(.intro-logo-stage) { animation:copy-dissolve 350ms ease both; }
+
+.intro-enter:focus-visible,.intro-skip:focus-visible { outline:3px solid #dfb75e; outline-offset:3px; }
+
+@keyframes loader-scene-arrive { from { opacity:0; } to { opacity:1; } }
+@keyframes loader-sky-breathe { from { filter:saturate(.88); } to { filter:saturate(1.05); } }
+@keyframes loader-sun-rise { from { opacity:0; translate:0 22px; scale:.76; } to { opacity:1; translate:0 0; scale:1; } }
+@keyframes loader-sun-pulse { 50% { filter:brightness(1.05); box-shadow:0 0 0 23px #fff3d533,0 0 110px 48px #f4d78ca0; } }
+@keyframes loader-horizon-arrive { to { opacity:1; transform:rotate(-4deg) translateY(0); } }
+@keyframes loader-sparkle { from { opacity:.3; transform:scale(.65); } to { opacity:1; transform:scale(1.3); } }
+@keyframes seedling-wave { to { transform:rotate(12deg); } }
+@keyframes loader-content-arrive { from { opacity:0; transform:translateY(17px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+@keyframes orbit-spin { to { transform:rotate(360deg); } }
+@keyframes loading-dot { to { opacity:.3; } }
+@keyframes scenery-arrive { to { opacity:1; } }
+@keyframes intro-sun-arrive { to { opacity:1; transform:translateX(-50%) scale(1); } }
+@keyframes hill-arrive { to { transform:rotate(-5deg) translateY(0); } }
+@keyframes cloud-appear { to { opacity:.82; } }
+@keyframes intro-content-arrive { from { opacity:0; transform:translateY(22px) scale(.98); filter:blur(4px); } to { opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
+@keyframes emblem-breathe { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-5px) rotate(2deg); } }
+@keyframes logo-orbit-rotate { to { transform:translate(-50%,-50%) rotate(360deg); } }
+@keyframes spark-float { to { transform:translateY(-5px) rotate(16deg); opacity:.72; } }
+@keyframes text-rise { from { opacity:0; transform:translateY(11px); } to { opacity:1; transform:translateY(0); } }
+@keyframes intro-iris-close { 0% { opacity:1; clip-path:circle(150% at 50% 45%); filter:brightness(1); } 30% { opacity:1; filter:brightness(1.12); } 100% { opacity:0; clip-path:circle(0% at 50% 45%); filter:brightness(1.5); } }
+@keyframes home-iris-open { 0% { clip-path:circle(0% at 50% 45%); filter:brightness(1.28) saturate(.72); } 65% { filter:brightness(1.04) saturate(.9); } 100% { clip-path:circle(150% at 50% 45%); filter:none; } }
+@keyframes brand-launch { 0% { transform:translateY(0) scale(1); opacity:1; } 45% { transform:translateY(-22px) scale(1.08); } 100% { transform:translateY(-70px) scale(.18); opacity:0; } }
+@keyframes emblem-launch { 0% { transform:scale(1) rotate(0); } 55% { transform:scale(1.16) rotate(-8deg); box-shadow:0 0 0 12px #fff4,0 0 80px 28px #fff9d8; } 100% { transform:scale(.45) rotate(22deg); opacity:0; } }
+@keyframes transition-flash { 0% { opacity:0; transform:translate(-50%,-50%) scale(.3); box-shadow:0 0 0 0 #fff8d8,0 0 0 0 #fff8d855; } 35% { opacity:1; transform:translate(-50%,-50%) scale(1); box-shadow:0 0 0 30px #fff9dc,0 0 0 80px #fff9dc55; } 100% { opacity:0; transform:translate(-50%,-50%) scale(90); box-shadow:0 0 0 0 #fff9dc,0 0 0 0 #fff9dc55; } }
+@keyframes copy-dissolve { to { opacity:0; transform:translateY(-10px); } }
+
+@media (max-width:650px) {
+  .loader-content { margin-top:24px; }
+  .loader-symbol { width:116px; height:116px; margin-bottom:22px; }
+  .loader-title { font-size:21px; }
+  .intro-content { margin-top:22px; padding:20px 16px; }
+  .intro-logo-stage { width:160px; height:160px; margin-bottom:9px; }
+  .school-emblem { width:88px; height:88px; }
+  .school-emblem .brand-mark-large { width:58px; height:58px; }
+  .orbit-outer { width:154px; height:94px; }
+  .orbit-inner { width:132px; height:132px; }
+  .orbit-spark-one { top:13px; right:29px; }
+  .orbit-spark-two { bottom:19px; left:23px; }
+  .intro-content .intro-kicker { font-size:7px; }
+  .intro-content h1 { font-size:clamp(34px,10vw,43px); }
+  .intro-content .intro-caption { font-size:11px; }
+  .intro-skip { top:15px; right:14px; }
+  .intro-footnote { bottom:15px; font-size:7px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .splash-loader,.brand-intro,.loader-sun,.loader-horizon,.loader-spark,.loader-ground span,.loader-ring,.intro-sun,.intro-cloud,.intro-hill,.school-emblem,.logo-orbit,.orbit-spark,.intro-content,.intro-kicker,.intro-caption,.intro-enter,.intro-footnote,.intro-skip,.site-shell.is-revealing,.intro--transitioning,.transition-flare { animation-duration:.01ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
+  .site-shell.is-revealing { clip-path:none; }
+  .intro--transitioning { clip-path:circle(0% at 50% 45%); }
+}

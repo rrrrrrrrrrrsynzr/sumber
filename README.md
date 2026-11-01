@@ -27,6 +27,7 @@ Workflow di `.github/workflows/pages.yml` menerbitkan situs secara otomatis seti
 ## Berkas
 
 - `src/main.jsx` — halaman dan komponen React.
-- `src/styles.css` — desain responsif, gerakan, dan dukungan reduced motion.
+- `src/styles.css` — desain responsif halaman dan dukungan reduced motion.
+- `src/intro-motion.css` — tahapan loading, orbit logo, dan transisi menuju halaman.
 - `assets/` — ilustrasi lokal untuk hero, galeri, dan ikon.
 - `.github/workflows/pages.yml` — build dan deploy otomatis ke GitHub Pages.
