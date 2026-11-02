@@ -2,23 +2,23 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowDown,
-  ArrowDownRight,
-  ArrowRight,
   ArrowUpRight,
-  Check,
-  ChevronDown,
   CircleHelp,
-  Clock3,
-  Compass,
   Leaf,
+  MessageCircle,
   Menu,
-  ShieldCheck,
+  RotateCcw,
+  Send,
   Sparkles,
+  Star,
   Sun,
   X,
 } from 'lucide-react';
 import './styles.css';
 import './intro-motion.css';
+import './content-layout.css';
+import './feedback.css';
+import { getFeedback, submitFeedback } from './feedback-service.js';
 
 const asset = (filename) => `${import.meta.env.BASE_URL}assets/${filename}`;
 
@@ -44,36 +44,6 @@ const photos = [
     note: 'Setiap inovasi dimulai dari bertanya',
     kind: 'illustration',
   },
-];
-
-const benefits = [
-  {
-    number: '01',
-    icon: Clock3,
-    title: 'Waktu lebih efisien',
-    text: 'Mendukung proses pengeringan agar lebih praktis dan mengurangi kerepotan yang berulang.',
-    tone: 'sunny',
-  },
-  {
-    number: '02',
-    icon: ShieldCheck,
-    title: 'Keselamatan ikut dipikirkan',
-    text: 'Berangkat dari kepedulian pada kenyamanan dan keselamatan pekerja di sekitar hasil panen.',
-    tone: 'blue',
-  },
-  {
-    number: '03',
-    icon: Leaf,
-    title: 'Potensi lokal bertumbuh',
-    text: 'Ikut merawat perhatian pada pertanian padi dan semangat Sleman Berdaya.',
-    tone: 'green',
-  },
-];
-
-const facts = [
-  { icon: Sun, title: 'Fokus pada pengeringan', note: 'Mendukung proses penjemuran padi' },
-  { icon: ShieldCheck, title: 'Mengutamakan keselamatan', note: 'Dirancang dengan kebutuhan pekerja dalam pikiran' },
-  { icon: Compass, title: 'Berangkat dari potensi lokal', note: 'Pertanian padi di Sleman, Yogyakarta' },
 ];
 
 function BrandMark({ large = false }) {
@@ -107,51 +77,13 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div', ...props
 }
 
 function LoadingScreen({ onComplete }) {
-  const [progress, setProgress] = useState(0);
-
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const duration = reducedMotion ? 250 : 1550;
-    let lastProgress = -1;
-    const start = performance.now();
-
-    const updateProgress = () => {
-      const progressRatio = Math.min((performance.now() - start) / duration, 1);
-      const eased = 1 - ((1 - progressRatio) ** 3);
-      const nextProgress = Math.round(eased * 100);
-      if (nextProgress !== lastProgress) {
-        lastProgress = nextProgress;
-        setProgress(nextProgress);
-      }
-    };
-
-    const progressTimer = window.setInterval(updateProgress, 32);
-    const completionTimer = window.setTimeout(() => {
-      window.clearInterval(progressTimer);
-      setProgress(100);
-      onComplete();
-    }, duration + (reducedMotion ? 100 : 280));
-
-    return () => {
-      window.clearInterval(progressTimer);
-      window.clearTimeout(completionTimer);
-    };
+    const timer = window.setTimeout(onComplete, reducedMotion ? 120 : 650);
+    return () => window.clearTimeout(timer);
   }, [onComplete]);
 
-  return (
-    <div className="intro splash-loader" role="status" aria-label="Menyiapkan pameran">
-      <div className="loader-sky" aria-hidden="true"><span className="loader-sun" /><span className="loader-horizon" /><span className="loader-spark spark-left" /><span className="loader-spark spark-right" /></div>
-      <div className="loader-content">
-        <div className="loader-symbol"><BrandMark large /><span className="loader-ring loader-ring-one" /><span className="loader-ring loader-ring-two" /></div>
-        <p className="loader-overline">PRAKARSA DARI SMPN 4 PAKEM</p>
-        <p className="loader-title">Menyiapkan cerita<span>.</span></p>
-        <p className="loader-caption">Sawah, ide, dan sedikit keajaiban teknologi.</p>
-        <div className="loader-progress" role="progressbar" aria-label="Progres persiapan pameran" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}><span style={{ '--loader-progress': `${progress}%` }} /></div>
-        <div className="loader-status"><span>MERAPIKAN PANGGUNG PAMERAN</span><b>{String(progress).padStart(2, '0')}%</b></div>
-      </div>
-      <div className="loader-ground" aria-hidden="true"><span /><span /></div>
-    </div>
-  );
+  return <div className="blank-loading" aria-hidden="true" />;
 }
 
 function Intro({ onEnter, transitioning }) {
@@ -183,7 +115,6 @@ function Intro({ onEnter, transitioning }) {
         <button className="intro-enter" type="button" onClick={enter}>Masuk ke pameran <ArrowUpRight size={17} /></button>
       </div>
       <p className="intro-footnote">Sebuah cerita dari Pakem, Yogyakarta <span>·</span> <b>STEM 2026</b></p>
-      <button className="intro-skip" type="button" onClick={enter}>Lewati intro <ArrowRight size={13} /></button>
       <span className="transition-flare" aria-hidden="true" />
     </div>
   );
@@ -202,117 +133,92 @@ function Header() {
 
   return (
     <header className={`topbar${scrolled ? ' topbar-scrolled' : ''}`}>
-      <a className="wordmark" href="#beranda" aria-label="Pradnyasiwi Quadtech, beranda" onClick={closeMenu}>
+      <a className="wordmark" href="#sumber" aria-label="Pradnyasiwi Quadtech, sumber proyek" onClick={closeMenu}>
         <BrandMark /><span>pradnyasiwi <b>quadtech</b></span>
       </a>
       <button className="menu-toggle" type="button" aria-label={menuOpen ? 'Tutup navigasi' : 'Buka navigasi'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
         {menuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
       <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label="Navigasi utama">
-        <a href="#tentang" onClick={closeMenu}>Cerita kami</a>
-        <a href="#manfaat" onClick={closeMenu}>Manfaat</a>
-        <a href="#galeri" onClick={closeMenu}>Galeri</a>
-        <a className="nav-cta" href="#alat" onClick={closeMenu}>Jelajahi alat <ArrowUpRight size={14} /></a>
+        <a href="#sumber" onClick={closeMenu}>Sumber</a>
+        <a href="#penjelasan" onClick={closeMenu}>Proyek</a>
+        <a href="#model" onClick={closeMenu}>Model 3D</a>
+        <a href="#dokumentasi" onClick={closeMenu}>Dokumentasi</a>
+        <a href="#tim" onClick={closeMenu}>Tim</a>
+        <a className="nav-cta" href="#feedback" onClick={closeMenu}>Feedback <ArrowUpRight size={14} /></a>
       </nav>
     </header>
   );
 }
 
-function Hero() {
-  const [pointer, setPointer] = useState({ x: 0, y: 0 });
-  const handlePointer = (event) => {
-    if (event.pointerType === 'touch') return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    setPointer({ x: ((event.clientX - rect.left) / rect.width - 0.5) * 7, y: ((event.clientY - rect.top) / rect.height - 0.5) * -7 });
-  };
-
+function ProjectSummary() {
   return (
-    <section className="hero section-wrap" id="beranda">
-      <Reveal className="hero-copy">
-        <div className="eyebrow"><span className="eyebrow-mark"><Sun size={13} /></span> Teknologi tepat guna dari Pakem, Sleman</div>
-        <h1>Panen cerah,<br /><span>kerja lebih aman.</span></h1>
-        <p className="hero-description">Kenalan dengan alat penjemur padi otomatis yang membantu proses pengeringan terasa lebih praktis—supaya petani punya satu hal lebih sedikit untuk dikhawatirkan.</p>
-        <div className="hero-actions"><a className="button button-primary" href="#alat">Lihat cara kerjanya <ArrowDown size={15} /></a><a className="text-link" href="#tentang">Kenapa kami membuatnya? <ArrowUpRight size={14} /></a></div>
-        <div className="hero-note"><span className="note-icon"><Leaf size={18} /></span><span>Dibuat dengan rasa ingin tahu<br /><b>oleh siswa SMPN 4 Pakem</b></span></div>
+    <section className="project-summary section-wrap" id="penjelasan">
+      <Reveal className="project-summary-copy">
+        <p className="eyebrow">GAMBARAN SINGKAT · PAKEM, SLEMAN</p>
+        <h1>Penjemuran padi,<br /><span>dibantu teknologi.</span></h1>
+        <p>Pradnyasiwi Quadtech dari SMPN 4 Pakem mengembangkan gagasan alat penjemur padi otomatis untuk mendukung efisiensi proses dan keselamatan pekerja. Detail rancangan dan klaim kinerja akan dilengkapi mengikuti data proyek.</p>
+        <a className="button button-primary" href="#model">Lihat model alat <ArrowDown size={15} /></a>
       </Reveal>
-      <Reveal className="hero-art-wrap" delay={100}>
-        <div className="hero-art" onPointerMove={handlePointer} onPointerLeave={() => setPointer({ x: 0, y: 0 })} style={{ '--tilt-x': `${pointer.x}deg`, '--tilt-y': `${pointer.y}deg` }}>
-          <img src={asset('sawah-pagi.svg')} alt="Ilustrasi sawah di bawah cahaya pagi, terinspirasi dari pertanian Sleman" fetchPriority="high" />
-          <div className="sun-stamp"><span><Sun size={20} /></span><small>CUACA CERAH<br />IDE MAKIN CERAH</small></div>
-          <div className="hero-art-label"><span className="live-dot" /> Ide lokal, dampak nyata <b><ArrowUpRight size={15} /></b></div>
-          <span className="hero-art-index">01 <i /> PAKEM, DIY</span>
-          <div className="floating-grain grain-a"><Sparkles size={30} /></div><div className="floating-grain grain-b"><span>✳</span></div>
-        </div>
-      </Reveal>
-      <a className="scroll-cue" href="#alat"><span className="scroll-cue-line" /> Gulir untuk menjelajah <ChevronDown size={13} /></a>
-    </section>
-  );
-}
-
-function MachineIllustration() {
-  return (
-    <div className="machine-scene" aria-label="Ilustrasi konsep alat penjemur padi otomatis" role="img">
-      <div className="machine-sun"><Sun size={58} strokeWidth={1.1} /></div>
-      <div className="machine-cloud cloud-left" /><div className="machine-cloud cloud-right" />
-      <div className="machine-ground"><span /><span /><span /></div>
-      <div className="machine">
-        <div className="machine-glow" />
-        <div className="machine-top"><span className="machine-panel"><i /><i /><i /><i /></span><span className="machine-cap" /></div>
-        <div className="machine-window"><span className="rice-line" /><span className="rice-line" /><span className="rice-line" /><span className="rice-line" /><span className="rice-line" /></div>
-        <div className="machine-controls"><span /><span /><span /><b>QUADTECH</b></div>
-        <div className="machine-leg leg-one" /><div className="machine-leg leg-two" />
-        <div className="machine-wheel wheel-one" /><div className="machine-wheel wheel-two" />
+      <div className="project-summary-aside" aria-label="Informasi tim">
+        <span className="summary-mark"><Leaf size={21} /></span>
+        <span><b>Pradnyasiwi Quadtech</b><small>SMPN 4 Pakem · Sleman, Yogyakarta</small></span>
       </div>
-      <div className="machine-label"><span className="machine-label-dot" /> KONSEP ALAT · ILUSTRASI</div>
-      <div className="visual-caption"><Sun size={14} /> Matahari bantu kerja, teknologi bantu jaga.</div>
-    </div>
-  );
-}
-
-function DeviceSection() {
-  return (
-    <section className="device-section section-wrap" id="alat">
-      <Reveal className="section-heading"><p className="eyebrow">01 — KENALAN DULU, YUK!</p><h2>Ini bukan jemuran biasa.<br /><span>Ini teman baik petani.</span></h2><p>Alat penunjang pertanian yang dirancang untuk membantu pengeringan padi dengan lebih efisien dan mendukung keselamatan pekerja.</p></Reveal>
-      <Reveal className="device-card" delay={80}>
-        <MachineIllustration />
-        <div className="device-info"><span className="tag tag-blue">INOVASI PERTANIAN</span><h3>Penjemur padi<br />otomatis</h3><p>Solusi yang berangkat dari kebutuhan nyata: proses pengeringan yang lebih terbantu, efisien, dan memperhatikan keselamatan pekerja.</p>
-          <div className="device-facts">{facts.map(({ icon: Icon, title, note }) => <div className="device-fact" key={title}><span className="fact-icon"><Icon size={16} /></span><span><b>{title}</b><small>{note}</small></span></div>)}</div>
-          <a className="text-link" href="#manfaat">Kenali manfaatnya <ArrowDown size={14} /></a>
-        </div>
-      </Reveal>
     </section>
   );
 }
 
-function StorySection() {
-  return (
-    <section className="story-section" id="tentang"><div className="section-wrap story-grid">
-      <Reveal className="story-copy"><p className="eyebrow">02 — CERITA DI BALIK IDE</p><h2>Dari sawah sekitar,<br />lahir <span>ide yang berarti.</span></h2>
-        <p>Pertanian padi punya peran penting bagi kehidupan kita. Namun, proses pengeringan hasil panen bisa menuntut waktu, tenaga, dan perhatian terhadap perubahan cuaca.</p>
-        <p>Berangkat dari semangat Sleman Berdaya dan potensi lokal, tim Pradnyasiwi Quadtech dari SMPN 4 Pakem ingin mengeksplorasi teknologi yang mendukung proses penjemuran agar lebih efisien serta memperhatikan keselamatan pekerja.</p>
-        <div className="quote-card"><span>“</span><p>Teknologi terbaik dimulai dari kepedulian pada kebutuhan di sekitar kita.</p><b>— Semangat Pradnyasiwi Quadtech</b></div>
-      </Reveal>
-      <Reveal className="story-image" delay={120}><img src={asset('lahan-padi.svg')} alt="Ilustrasi tanaman padi dan lanskap pertanian" loading="lazy" /><div className="image-sticker"><span>🌱</span><b>Tumbuh dari<br />potensi lokal</b></div><span className="image-caption">Sleman, tempat ide baik bertumbuh.</span></Reveal>
-    </div></section>
-  );
-}
+function Model3DSection() {
+  const [rotation, setRotation] = useState(-28);
+  const [tilt, setTilt] = useState(8);
+  const dragStart = useRef(null);
+  const startDrag = (event) => {
+    if (event.button !== undefined && event.button !== 0) return;
+    dragStart.current = { x: event.clientX, y: event.clientY, rotation, tilt };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+  const dragModel = (event) => {
+    if (!dragStart.current) return;
+    setRotation(dragStart.current.rotation + (event.clientX - dragStart.current.x) * .65);
+    setTilt(Math.max(-12, Math.min(20, dragStart.current.tilt - (event.clientY - dragStart.current.y) * .28)));
+  };
+  const endDrag = () => { dragStart.current = null; };
+  const resetModel = () => { setRotation(-28); setTilt(8); };
 
-function BenefitsSection() {
   return (
-    <section className="benefits-section section-wrap" id="manfaat">
-      <Reveal className="section-heading center-heading"><p className="eyebrow">03 — KENAPA INI PENTING?</p><h2>Lebih dari sekadar<br /><span>mengeringkan padi.</span></h2><p>Inovasi ini membawa tiga harapan sederhana untuk pertanian yang makin berdaya.</p></Reveal>
-      <div className="benefit-grid">{benefits.map(({ number, icon: Icon, title, text, tone }, index) => <Reveal as="article" className={`benefit-card tone-${tone}`} delay={index * 85} key={number}><div className="benefit-card-top"><span className="benefit-icon"><Icon size={21} strokeWidth={1.7} /></span><span className="card-number">{number}</span></div><h3>{title}</h3><p>{text}</p><span className="card-doodle"><Sparkles size={25} /></span></Reveal>)}</div>
+    <section className="model-section" id="model">
+      <div className="section-wrap model-layout">
+        <Reveal className="model-copy">
+          <p className="eyebrow">MODEL INTERAKTIF · KONSEP</p>
+          <h2>Lihat dari<br /><span>sudut pandangmu.</span></h2>
+          <p>Seret model untuk memutar dan melihat ilustrasi konsep alat. Ini visualisasi awal, bukan gambar teknik atau model final.</p>
+          <div className="model-controls">
+            <button type="button" onClick={() => setRotation((value) => value - 35)} aria-label="Putar model ke kiri">Putar kiri</button>
+            <button type="button" onClick={() => setRotation((value) => value + 35)} aria-label="Putar model ke kanan">Putar kanan</button>
+            <button type="button" className="model-reset" onClick={resetModel} aria-label="Kembalikan sudut model"><RotateCcw size={14} /> Reset</button>
+          </div>
+          <p className="model-disclaimer"><CircleHelp size={14} /> Bentuk, ukuran, dan komponen masih perlu disesuaikan dengan prototipe sebenarnya.</p>
+        </Reveal>
+        <Reveal className="model-viewer" delay={110}>
+          <div className="model-viewer-top"><span><i /> PRADNYASIWI / STUDI KONSEP</span><span>3D · 01</span></div>
+          <div className="model-stage" onPointerDown={startDrag} onPointerMove={dragModel} onPointerUp={endDrag} onPointerCancel={endDrag} onPointerLeave={endDrag} role="img" aria-label="Model 3D konseptual penjemur padi otomatis, dapat diputar dengan menyeret">
+            <div className="model-sun-disc"><Sun size={36} strokeWidth={1.1} /></div>
+            <div className="model-cloud cloud-a" /><div className="model-cloud cloud-b" />
+            <div className="model-platform" />
+            <div className="model-object" style={{ '--model-yaw': `${rotation}deg`, '--model-tilt': `${tilt}deg` }}>
+              <div className="model-roof"><span /><span /><span /><span /></div>
+              <div className="model-chamber"><div className="model-window"><i /><i /><i /><i /></div><div className="model-side-vent"><i /><i /><i /></div><div className="model-control-panel"><i /><i /><i /></div></div>
+              <div className="model-stand stand-one" /><div className="model-stand stand-two" /><div className="model-stand stand-three" /><div className="model-stand stand-four" />
+              <div className="model-wheel wheel-a" /><div className="model-wheel wheel-b" /><div className="model-wheel wheel-c" /><div className="model-wheel wheel-d" />
+            </div>
+            <span className="model-axis axis-x">X</span><span className="model-axis axis-y">Y</span><span className="model-axis axis-z">Z</span>
+            <div className="model-drag-hint"><span>↔</span> SERET UNTUK MEMUTAR</div>
+          </div>
+          <div className="model-viewer-foot"><span>Penjemur padi otomatis</span><span>VISUALISASI KONSEP</span></div>
+        </Reveal>
+      </div>
     </section>
   );
-}
-
-function StepsSection() {
-  const steps = [
-    { icon: '🌾', title: 'Siapkan hasil panen', text: 'Padi disiapkan untuk memasuki proses pengeringan.' },
-    { icon: '☀️', title: 'Proses pengeringan terbantu', text: 'Alat dirancang mendukung proses dengan lebih praktis.' },
-    { icon: '✨', title: 'Petani punya lebih banyak waktu', text: 'Harapannya, pekerjaan terasa lebih efisien dan aman.' },
-  ];
-  return <section className="steps-section"><div className="section-wrap steps-inner"><Reveal className="steps-title"><p className="eyebrow">04 — IDE KERJANYA</p><h2>Alur sederhana,<br /><span>manfaat bermakna.</span></h2><p>Gambaran umum bagaimana alat ini dirancang untuk mendukung proses penjemuran.</p></Reveal><div className="steps-list">{steps.map((step, index) => <Reveal className="step-item" delay={index * 90} key={step.title}><span className="step-index">0{index + 1}</span><div className="step-emoji">{step.icon}</div><div><h3>{step.title}</h3><p>{step.text}</p></div><span className="step-arrow">{index === steps.length - 1 ? <Check size={16} /> : <ArrowDownRight size={16} />}</span></Reveal>)}</div></div></section>;
 }
 
 function GallerySection() {
@@ -327,8 +233,8 @@ function GallerySection() {
 
   return (
     <>
-      <section className="gallery-section section-wrap" id="galeri">
-        <Reveal className="gallery-heading"><div><p className="eyebrow">05 — POTRET PERJALANAN</p><h2>Dari ide sampai jadi,<br /><span>semua ada ceritanya.</span></h2></div><p>Geser, lihat-lihat, dan intip dunia kecil di balik ide ini.</p></Reveal>
+      <section className="gallery-section section-wrap" id="dokumentasi">
+        <Reveal className="gallery-heading"><div><p className="eyebrow">DOKUMENTASI PROYEK</p><h2>Catatan proses<br /><span>dan visual alat.</span></h2></div><p>Foto prototipe dan kegiatan tim akan menggantikan ilustrasi sementara ini.</p></Reveal>
         <div className="gallery-grid">{photos.map((photo, index) => <Reveal as="button" className={`gallery-item${index === 0 ? ' gallery-large' : ''}`} delay={index * 75} key={photo.title} type="button" onClick={() => setActivePhoto(photo)} aria-label={`Perbesar: ${photo.title}`}><img src={photo.src} alt={photo.alt} loading="lazy" /><span className="gallery-caption"><b>{photo.title}</b><small>{photo.note}</small></span><span className="expand-icon"><ArrowUpRight size={15} /></span>{photo.kind === 'illustration' && <span className="illustration-badge">ILUSTRASI</span>}</Reveal>)}</div>
         <div className="gallery-note"><span className="gallery-note-icon"><CircleHelp size={17} /></span><span><b>Catatan kecil:</b> gambar di galeri ini adalah ilustrasi. Dokumentasi alat dan proses asli akan ditambahkan setelah tersedia.</span></div>
       </section>
@@ -338,19 +244,134 @@ function GallerySection() {
 }
 
 function SourcesSection() {
-  return <section className="sources-section section-wrap"><Reveal className="sources-card"><div className="sources-icon"><span>📚</span></div><div><p className="eyebrow">REFERENSI & SUMBER</p><h2>Ide baik juga perlu <span>dasar kuat.</span></h2><p>Daftar sumber dan referensi resmi akan ditambahkan setelah materi proyek tersedia. Informasi yang tercantum di halaman ini masih berupa gambaran umum.</p></div><div className="source-placeholder"><span className="source-dot" /> Sumber proyek segera hadir</div></Reveal></section>;
+  return (
+    <section className="sources-section source-first section-wrap" id="sumber">
+      <Reveal className="sources-heading">
+        <p className="eyebrow">LANDASAN PROYEK · RUJUKAN UTAMA</p>
+        <h1>Sumber & <span>referensi.</span></h1>
+        <p>Rujukan yang dipakai tim akan ditempatkan di sini terlebih dahulu, sebelum dokumentasi dan materi pendukung lainnya.</p>
+      </Reveal>
+      <Reveal className="source-board" delay={80}>
+        <div className="source-board-header"><span className="source-led" /> DAFTAR RUJUKAN TIM <span className="source-board-count">MENUNGGU MATERI</span></div>
+        <div className="source-empty"><span className="sources-icon"><span>↗</span></span><div><h2>Sumbernya menyusul dari tim.</h2><p>Belum ada tautan, judul, atau data rujukan yang diberikan. Setelah materi diterima, daftar sumber akan tampil di bagian utama ini—tanpa placeholder yang dianggap sebagai fakta.</p></div></div>
+        <div className="source-topics" aria-label="Kelompok referensi yang akan dilengkapi"><span>01 · Pertanian padi</span><span>02 · Penjemuran gabah</span><span>03 · Keselamatan pekerja</span><span>04 · Sleman Berdaya</span></div>
+      </Reveal>
+    </section>
+  );
 }
 
-function BehindScenes() {
-  return <section className="bts-section"><div className="section-wrap bts-wrap"><Reveal className="bts-copy"><p className="eyebrow">06 — DI BALIK LAYAR</p><h2>Banyak ide, sedikit<br /><span>drama kabel.</span> (Katanya.)</h2><p>Di balik sebuah alat ada proses mencoba, berdiskusi, merakit, dan kadang berkata, “loh, tadi nyala kan?” Inilah perjalanan kecil tim kami.</p><a className="button button-light" href="#galeri">Lihat ilustrasi perjalanan <ArrowUpRight size={15} /></a><div className="bts-signoff">Semangat, tim! <Sparkles size={14} /></div></Reveal><Reveal className="bts-collage" delay={100}>
-      <div className="bts-photo bts-main-photo"><div className="placeholder-art"><span className="placeholder-gear">⚙</span><b>PROSES PERAKITAN</b><small>Foto prototipe akan hadir di sini</small></div><span>Ruang dokumentasi · prototipe</span></div>
-      <div className="bts-photo bts-small-photo"><div className="placeholder-art"><span className="placeholder-team">✳</span><b>PRADNYASIWI</b><small>Tim di balik ide ini</small></div><span>Ruang dokumentasi · tim</span></div>
-      <span className="bts-sparkle sparkle-a">✳</span><span className="bts-sparkle sparkle-b">✦</span><div className="bts-note">dibuat bareng,<br />belajarnya bareng 💙</div>
-    </Reveal></div></section>;
+function TeamSection() {
+  return (
+    <section className="team-section" id="tim">
+      <div className="section-wrap team-layout">
+        <Reveal className="team-copy"><p className="eyebrow">DI BALIK GAGASAN</p><h2>Kenalkan,<br /><span>tim kami.</span></h2><p>Sebuah proyek STEM dari siswa SMPN 4 Pakem. Nama dan peran anggota dapat ditambahkan setelah daftar tim final tersedia.</p></Reveal>
+        <Reveal className="team-card" delay={90}>
+          <div className="team-emblem"><Leaf size={27} /></div>
+          <div><p className="team-label">NAMA KELOMPOK</p><h3>Pradnyasiwi<br />Quadtech</h3></div>
+          <div className="team-divider" />
+          <div className="team-school"><span>SMPN 4 PAKEM</span><small>Pakem · Sleman · Yogyakarta</small></div>
+          <p className="team-roster-note">Anggota & pembagian tugas: <b>menyusul dari tim.</b></p>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function FeedbackSection() {
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('Saran');
+  const [rating, setRating] = useState(5);
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notice, setNotice] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    getFeedback()
+      .then((items) => { if (active) setFeedbacks(Array.isArray(items) ? items : []); })
+      .catch(() => { if (active) setError('Masukan belum dapat dimuat. Silakan coba lagi nanti.'); })
+      .finally(() => { if (active) setIsLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setNotice('');
+    setError('');
+    try {
+      const saved = await submitFeedback({
+        name: name.trim() || 'Pengunjung',
+        category,
+        rating,
+        message: message.trim(),
+      });
+      setFeedbacks((current) => [saved, ...current]);
+      setName('');
+      setMessage('');
+      setNotice('Terima kasih, masukanmu sudah tersimpan.');
+    } catch {
+      setError('Masukan belum berhasil dikirim. Coba lagi sebentar lagi.');
+    } finally {
+    }
+  };
+
+  return (
+    <section className="feedback-section" id="feedback">
+      <div className="section-wrap feedback-layout">
+        <Reveal className="feedback-intro">
+          <p className="eyebrow">07 · SUARA PENGUNJUNG</p>
+          <h2>Ceritakan <span>pendapatmu.</span></h2>
+          <p>Masukanmu membantu kami mengembangkan ide ini. Situs ini tanpa backend, jadi feedback hanya tersimpan di browser yang digunakan dan tidak terkirim ke tim.</p>
+          <div className="feedback-count"><MessageCircle size={17} /><span><b>{feedbacks.length}</b> masukan terkumpul</span></div>
+        </Reveal>
+
+        <Reveal className="feedback-panel" delay={90}>
+          <form className="feedback-form" onSubmit={handleSubmit}>
+            <label className="feedback-label" htmlFor="feedback-name">Nama <span>opsional</span></label>
+            <input id="feedback-name" name="name" type="text" maxLength={40} placeholder="Namamu atau anonim" value={name} onChange={(event) => setName(event.target.value)} />
+
+            <div className="feedback-form-row">
+              <label className="feedback-field">
+                <span className="feedback-label">Jenis masukan</span>
+                <select value={category} onChange={(event) => setCategory(event.target.value)}>
+                  <option>Saran</option>
+                  <option>Pertanyaan</option>
+                  <option>Apresiasi</option>
+                </select>
+              </label>
+              <fieldset className="rating-field">
+                <legend className="feedback-label">Penilaian</legend>
+                <div className="rating-buttons" aria-label={`Penilaian ${rating} dari 5`}>{[1, 2, 3, 4, 5].map((value) => <button className={value <= rating ? 'is-selected' : ''} key={value} type="button" aria-label={`${value} dari 5 bintang`} aria-pressed={rating === value} onClick={() => setRating(value)}><Star size={17} fill="currentColor" /></button>)}</div>
+              </fieldset>
+            </div>
+
+            <label className="feedback-label" htmlFor="feedback-message">Masukanmu</label>
+            <textarea id="feedback-message" name="message" minLength={10} maxLength={500} required placeholder="Tulis saran atau pendapatmu di sini..." value={message} onChange={(event) => setMessage(event.target.value)} />
+            <div className="feedback-form-footer"><small>{message.length}/500 karakter</small><button className="feedback-submit" type="submit" disabled={isSubmitting}><span>{isSubmitting ? 'Mengirim...' : 'Kirim masukan'}</span><Send size={15} /></button></div>
+            {notice && <p className="feedback-notice" role="status">{notice}</p>}
+            {error && <p className="feedback-error" role="alert">{error}</p>}
+          </form>
+
+          <div className="feedback-list" aria-live="polite">
+            <h3>Masukan terbaru <span>{feedbacks.length}</span></h3>
+            {isLoading ? <p className="feedback-empty">Memuat masukan...</p> : feedbacks.length === 0 ? <p className="feedback-empty">Belum ada masukan. Jadilah yang pertama berbagi.</p> : feedbacks.slice(0, 3).map((item) => <article className="feedback-item" key={item.id}>
+              <div className="feedback-item-top"><b>{item.name || 'Pengunjung'}</b><span>{item.category || 'Saran'}</span></div>
+              <div className="feedback-item-rating" aria-label={`Penilaian ${item.rating || 5} dari 5`}>{[1, 2, 3, 4, 5].map((value) => <Star key={value} size={11} fill={value <= (item.rating || 5) ? 'currentColor' : 'none'} />)}</div>
+              <p>{item.message}</p>
+            </article>)}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
 }
 
 function Footer() {
-  return <footer className="footer"><a className="wordmark footer-brand" href="#beranda"><BrandMark /><span>pradnyasiwi <b>quadtech</b></span></a><p>Sebuah langkah kecil untuk pertanian yang lebih berdaya. <Sun size={13} /></p><span className="footer-school">SMPN 4 PAKEM · SLEMAN, YOGYAKARTA</span></footer>;
+  return <footer className="footer"><a className="wordmark footer-brand" href="#sumber"><BrandMark /><span>pradnyasiwi <b>quadtech</b></span></a><p>Sebuah langkah kecil untuk pertanian yang lebih berdaya. <Sun size={13} /></p><span className="footer-school">SMPN 4 PAKEM · SLEMAN, YOGYAKARTA</span></footer>;
 }
 
 function App() {
@@ -370,7 +391,7 @@ function App() {
   useEffect(() => {
     if (phase !== 'transition') return undefined;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const timer = window.setTimeout(() => setPhase('home'), prefersReducedMotion ? 100 : 1100);
+    const timer = window.setTimeout(() => setPhase('home'), prefersReducedMotion ? 100 : 1200);
     return () => window.clearTimeout(timer);
   }, [phase]);
 
@@ -379,7 +400,7 @@ function App() {
     {(phase === 'intro' || phase === 'transition') && <Intro onEnter={startTransition} transitioning={phase === 'transition'} />}
     <div className={`site-shell${phase === 'transition' || phase === 'home' ? ' is-visible' : ''}${phase === 'transition' ? ' is-revealing' : ''}`} aria-hidden={phase !== 'transition' && phase !== 'home'} inert={phase !== 'home'}>
       <Header />
-      <main><Hero /><DeviceSection /><StorySection /><BenefitsSection /><StepsSection /><GallerySection /><SourcesSection /><BehindScenes /></main>
+      <main><SourcesSection /><ProjectSummary /><Model3DSection /><GallerySection /><FeedbackSection /><TeamSection /></main>
       <Footer />
     </div>
   </>;

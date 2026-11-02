@@ -1,4 +1,4 @@
-/* Intro/loading choreography — standalone so the school mark and its orbit remain easy to replace independently. */
+/* Intro/loading choreography - standalone so the school mark and its orbit remain easy to replace independently. */
 .splash-loader,
 .brand-intro {
   position: fixed;
@@ -216,7 +216,6 @@
 .intro-footnote { position:absolute; z-index:2; bottom:20px; margin:0; color:#f5f8ee; font-size:9px; letter-spacing:.08em; text-shadow:0 1px 5px #273c39; opacity:0; animation:text-rise .65s .95s forwards; }
 .intro-footnote span { margin-inline:7px; }
 .intro-footnote b { font-weight:700; }
-.intro-skip { position:absolute; z-index:4; top:24px; right:28px; display:flex; align-items:center; gap:9px; padding:8px 11px; border:1px solid #fff7; border-radius:22px; background:#ffffff45; color:#41666a; font-size:10px; cursor:pointer; opacity:0; animation:fade-in .5s 1s forwards; }
 .transition-flare { position:fixed; z-index:5; left:50%; top:46%; width:14px; height:14px; border-radius:50%; background:#fff9dc; box-shadow:0 0 0 0 #fff8d8,0 0 0 0 #fff8d855; opacity:0; transform:translate(-50%,-50%) scale(.3); pointer-events:none; }
 
 /* The emblem and orbit are separate DOM layers: drop in the school's real badge without redrawing the orbital accents. */
@@ -228,7 +227,7 @@
 .intro--transitioning .transition-flare { animation:transition-flash 920ms ease-out both; }
 .intro--transitioning .intro-content > :not(.intro-logo-stage) { animation:copy-dissolve 350ms ease both; }
 
-.intro-enter:focus-visible,.intro-skip:focus-visible { outline:3px solid #dfb75e; outline-offset:3px; }
+.intro-enter:focus-visible { outline:3px solid #dfb75e; outline-offset:3px; }
 
 @keyframes loader-scene-arrive { from { opacity:0; } to { opacity:1; } }
 @keyframes loader-sky-breathe { from { filter:saturate(.88); } to { filter:saturate(1.05); } }
@@ -271,12 +270,11 @@
   .intro-content .intro-kicker { font-size:7px; }
   .intro-content h1 { font-size:clamp(34px,10vw,43px); }
   .intro-content .intro-caption { font-size:11px; }
-  .intro-skip { top:15px; right:14px; }
   .intro-footnote { bottom:15px; font-size:7px; }
 }
 
 @media (prefers-reduced-motion:reduce) {
-  .splash-loader,.brand-intro,.loader-sun,.loader-horizon,.loader-spark,.loader-ground span,.loader-ring,.intro-sun,.intro-cloud,.intro-hill,.school-emblem,.logo-orbit,.orbit-spark,.intro-content,.intro-kicker,.intro-caption,.intro-enter,.intro-footnote,.intro-skip,.site-shell.is-revealing,.intro--transitioning,.transition-flare { animation-duration:.01ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
+  .splash-loader,.brand-intro,.loader-sun,.loader-horizon,.loader-spark,.loader-ground span,.loader-ring,.intro-sun,.intro-cloud,.intro-hill,.school-emblem,.logo-orbit,.orbit-spark,.intro-content,.intro-kicker,.intro-caption,.intro-enter,.intro-footnote,.site-shell.is-revealing,.intro--transitioning,.transition-flare { animation-duration:.01ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
   .site-shell.is-revealing { clip-path:none; }
   .intro--transitioning { clip-path:circle(0% at 50% 45%); }
 }

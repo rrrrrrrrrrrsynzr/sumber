@@ -13,6 +13,10 @@ npm run dev
 
 Situs ini dibuat dengan React dan Vite. Tidak ada backend atau layanan server aplikasi; GitHub Actions membangun file statis untuk GitHub Pages.
 
+## Feedback
+
+Form feedback menyimpan masukan hanya di `localStorage` pada browser pengunjung. Karena situs ini statis dan tanpa backend, masukan tidak terkirim ke tim atau tersinkron ke perangkat lain.
+
 ## GitHub Pages
 
 Workflow di `.github/workflows/pages.yml` menerbitkan situs secara otomatis setiap kali ada push ke branch `main`. Setelah workflow pertama berhasil, pastikan **Settings → Pages → Build and deployment → Source** memakai **GitHub Actions**. URL situs akan muncul di halaman Pages dan pada hasil workflow.
@@ -28,6 +32,7 @@ Workflow di `.github/workflows/pages.yml` menerbitkan situs secara otomatis seti
 
 - `src/main.jsx` — halaman dan komponen React.
 - `src/styles.css` — desain responsif halaman dan dukungan reduced motion.
+- `src/content-layout.css` — hierarki sumber di halaman awal, model konseptual yang dapat diputar, dan bagian kelompok.
 - `src/intro-motion.css` — tahapan loading, orbit logo, dan transisi menuju halaman.
 - `assets/` — ilustrasi lokal untuk hero, galeri, dan ikon.
 - `.github/workflows/pages.yml` — build dan deploy otomatis ke GitHub Pages.
