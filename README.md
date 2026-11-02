@@ -4,24 +4,22 @@ Website pameran STEM untuk memperkenalkan konsep alat penjemur padi otomatis dar
 
 ## Menjalankan lokal
 
-Butuh Node.js 20.19+ atau 22.12+.
+Butuh Node.js 22.x.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Situs ini dibuat dengan React dan Vite. Tidak ada backend atau layanan server aplikasi; GitHub Actions membangun file statis untuk GitHub Pages.
+Frontend dibuat dengan React dan Vite, sedangkan backend Node/Express menyimpan feedback pada SQLite. Karena itu aplikasi ini bukan lagi situs statis: GitHub Pages tidak dapat menjalankan backend. Ikuti panduan host Node di [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Feedback
 
-Form feedback menyimpan masukan hanya di `localStorage` pada browser pengunjung. Karena situs ini statis dan tanpa backend, masukan tidak terkirim ke tim atau tersinkron ke perangkat lain.
+Form feedback mengirim masukan ke backend dan SQLite persisten. Daftar masukan hanya terlihat di panel internal `/dev/feedback`, yang membutuhkan kredensial server. Halaman publik tidak menampilkan daftar masukan.
 
-## GitHub Pages
+## Hosting
 
-Workflow di `.github/workflows/pages.yml` menerbitkan situs secara otomatis setiap kali ada push ke branch `main`. Setelah workflow pertama berhasil, pastikan **Settings → Pages → Build and deployment → Source** memakai **GitHub Actions**. URL situs akan muncul di halaman Pages dan pada hasil workflow.
-
-Domain khusus yang disiapkan: `source.pradnyasiwi.web.id`. Supaya domain dan tautan PDF aktif, tambahkan DNS CNAME `source` yang mengarah ke `rrrrrrrrrrrsynzr.github.io`, lalu atur domain yang sama pada **Settings → Pages → Custom domain**. DNS dikelola di penyedia domain dan tidak dapat diubah dari repository ini.
+Domain yang disiapkan: `source.pradnyasiwi.web.id`. Arahkan DNS ke server Node hosting Anda dan gunakan HTTPS. Panduan deploy dan alasan GitHub Pages tidak sesuai ada di [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Konten yang perlu dilengkapi
 
@@ -37,6 +35,8 @@ Domain khusus yang disiapkan: `source.pradnyasiwi.web.id`. Supaya domain dan tau
 - `src/content-layout.css` — hierarki sumber di halaman awal, model konseptual yang dapat diputar, dan bagian kelompok.
 - `src/source-references.css` — tampilan kartu dan ringkasan sumber.
 - `src/intro-motion.css` — tahapan loading, orbit logo, dan transisi menuju halaman.
+- `server/` — API Express dan database SQLite.
+- `DEPLOYMENT.md` — setup server, storage, keamanan, dan domain.
 - `assets/` — ilustrasi lokal untuk hero, galeri, dan ikon.
 - `files/` — dokumen PDF sumber penelitian.
 - `CNAME` — domain khusus GitHub Pages.

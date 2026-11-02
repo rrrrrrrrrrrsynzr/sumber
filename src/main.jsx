@@ -21,7 +21,9 @@ import './intro-motion.css';
 import './content-layout.css';
 import './feedback.css';
 import './source-references.css';
-import { getFeedback, submitFeedback } from './feedback-service.js';
+import './dev-feedback.css';
+import { submitFeedback } from './feedback-service.js';
+import DevFeedback from './DevFeedback.jsx';
 
 const asset = (filename) => `${import.meta.env.BASE_URL}assets/${filename}`;
 
@@ -123,7 +125,7 @@ function Intro({ onEnter, transitioning }) {
   );
 }
 
-function Header() {
+function Header({ devPage = false }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -135,7 +137,7 @@ function Header() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className={`topbar${scrolled ? ' topbar-scrolled' : ''}`}>
+    <header className={`topbar${devPage ? ' topbar-dev' : ''}${scrolled ? ' topbar-scrolled' : ''}`}>
       <a className="wordmark" href="#sumber" aria-label="Pradnyasiwi Quadtech, sumber proyek" onClick={closeMenu}>
         <BrandMark /><span>pradnyasiwi <b>quadtech</b></span>
       </a>
@@ -143,12 +145,14 @@ function Header() {
         {menuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
       <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label="Navigasi utama">
-        <a href="#sumber" onClick={closeMenu}>Sumber</a>
-        <a href="#penjelasan" onClick={closeMenu}>Proyek</a>
-        <a href="#model" onClick={closeMenu}>Model 3D</a>
-        <a href="#dokumentasi" onClick={closeMenu}>Dokumentasi</a>
-        <a href="#tim" onClick={closeMenu}>Tim</a>
-        <a className="nav-cta" href="#feedback" onClick={closeMenu}>Feedback <ArrowUpRight size={14} /></a>
+        {devPage ? <a className="nav-cta" href="/">Kembali ke pameran <ArrowUpRight size={14} /></a> : <>
+          <a href="#sumber" onClick={closeMenu}>Sumber</a>
+          <a href="#penjelasan" onClick={closeMenu}>Proyek</a>
+          <a href="#model" onClick={closeMenu}>Model 3D</a>
+          <a href="#dokumentasi" onClick={closeMenu}>Dokumentasi</a>
+          <a href="#tim" onClick={closeMenu}>Tim</a>
+          <a className="nav-cta" href="#feedback" onClick={closeMenu}>Feedback <ArrowUpRight size={14} /></a>
+        </>}
       </nav>
     </header>
   );
@@ -175,6 +179,9 @@ function Model3DSection() {
   const [rotation, setRotation] = useState(-28);
   const [tilt, setTilt] = useState(8);
   const dragStart = useRef(null);
+  const modelObject = useRef(null);
+  const dragFrame = useRef(0);
+  const pendingPointer = useRef(null);
   const startDrag = (event) => {
     if (event.button !== undefined && event.button !== 0) return;
     dragStart.current = { x: event.clientX, y: event.clientY, rotation, tilt };
@@ -182,11 +189,34 @@ function Model3DSection() {
   };
   const dragModel = (event) => {
     if (!dragStart.current) return;
-    setRotation(dragStart.current.rotation + (event.clientX - dragStart.current.x) * .65);
-    setTilt(Math.max(-12, Math.min(20, dragStart.current.tilt - (event.clientY - dragStart.current.y) * .28)));
+    pendingPointer.current = { x: event.clientX, y: event.clientY };
+    if (dragFrame.current) return;
+    dragFrame.current = window.requestAnimationFrame(() => {
+      dragFrame.current = 0;
+      if (!dragStart.current || !pendingPointer.current || !modelObject.current) return;
+      const nextRotation = dragStart.current.rotation + (pendingPointer.current.x - dragStart.current.x) * .8;
+      const nextTilt = Math.max(-12, Math.min(20, dragStart.current.tilt - (pendingPointer.current.y - dragStart.current.y) * .42));
+      modelObject.current.style.setProperty('--model-yaw', `${nextRotation}deg`);
+      modelObject.current.style.setProperty('--model-tilt', `${nextTilt}deg`);
+    });
   };
-  const endDrag = () => { dragStart.current = null; };
+  const endDrag = () => {
+    if (!dragStart.current) return;
+    if (dragFrame.current) window.cancelAnimationFrame(dragFrame.current);
+    dragFrame.current = 0;
+    if (pendingPointer.current && modelObject.current) {
+      const nextRotation = dragStart.current.rotation + (pendingPointer.current.x - dragStart.current.x) * .8;
+      const nextTilt = Math.max(-12, Math.min(20, dragStart.current.tilt - (pendingPointer.current.y - dragStart.current.y) * .42));
+      setRotation(nextRotation);
+      setTilt(nextTilt);
+    }
+    dragStart.current = null;
+    pendingPointer.current = null;
+  };
   const resetModel = () => { setRotation(-28); setTilt(8); };
+  useEffect(() => () => {
+    if (dragFrame.current) window.cancelAnimationFrame(dragFrame.current);
+  }, []);
 
   return (
     <section className="model-section" id="model">
@@ -204,11 +234,11 @@ function Model3DSection() {
         </Reveal>
         <Reveal className="model-viewer" delay={110}>
           <div className="model-viewer-top"><span><i /> PRADNYASIWI / STUDI KONSEP</span><span>3D · 01</span></div>
-          <div className="model-stage" onPointerDown={startDrag} onPointerMove={dragModel} onPointerUp={endDrag} onPointerCancel={endDrag} onPointerLeave={endDrag} role="img" aria-label="Model 3D konseptual penjemur padi otomatis, dapat diputar dengan menyeret">
+          <div className="model-stage" onPointerDown={startDrag} onPointerMove={dragModel} onPointerUp={endDrag} onPointerCancel={endDrag} role="img" aria-label="Model 3D konseptual penjemur padi otomatis, dapat diputar dengan menyeret">
             <div className="model-sun-disc"><Sun size={36} strokeWidth={1.1} /></div>
             <div className="model-cloud cloud-a" /><div className="model-cloud cloud-b" />
             <div className="model-platform" />
-            <div className="model-object" style={{ '--model-yaw': `${rotation}deg`, '--model-tilt': `${tilt}deg` }}>
+            <div ref={modelObject} className="model-object" style={{ '--model-yaw': `${rotation}deg`, '--model-tilt': `${tilt}deg` }}>
               <div className="model-roof"><span /><span /><span /><span /></div>
               <div className="model-chamber"><div className="model-window"><i /><i /><i /><i /></div><div className="model-side-vent"><i /><i /><i /></div><div className="model-control-panel"><i /><i /><i /></div></div>
               <div className="model-stand stand-one" /><div className="model-stand stand-two" /><div className="model-stand stand-three" /><div className="model-stand stand-four" />
@@ -252,7 +282,7 @@ function SourcesSection() {
       <Reveal className="sources-heading">
         <p className="eyebrow">RUJUKAN PROYEK · BACAAN PILIHAN</p>
         <h1>Mulai dari <span>sumbernya.</span></h1>
-        <p>Dua bacaan ini membantu memberi konteks pada keselamatan kerja dan paparan panas. Keduanya bukan uji langsung terhadap prototipe penjemur padi kami.</p>
+        <p>Tiga bacaan ini memberi konteks pada keselamatan kerja, paparan panas, dan tantangan nyata saat menjemur gabah. Tidak satu pun merupakan uji langsung terhadap prototipe kami.</p>
       </Reveal>
       <div className="source-grid">
         <Reveal as="article" className="source-card" delay={60}>
@@ -271,6 +301,14 @@ function SourcesSection() {
           <div className="source-takeaway"><b>Hubungannya dengan proyek</b><span>Memberi konteks keselamatan saat bekerja di lingkungan panas. Alat ini belum terbukti mencegah heat stroke.</span></div>
           <div className="source-links"><a href="https://www.siloamhospitals.com/informasi-siloam/artikel/heat-stroke-adalah" target="_blank" rel="noreferrer">Baca artikel Siloam <ExternalLink size={13} /></a></div>
         </Reveal>
+        <Reveal as="article" className="source-card" delay={200}>
+          <div className="source-card-top"><span className="source-card-icon source-health-icon"><Sun size={18} /></span><span className="source-kind">BERITA LAPANGAN · 2026</span></div>
+          <h2>Mengapa gabah dijemur di bahu jalan?</h2>
+          <p className="source-byline">Reni Kurnia Wati · Banjarmasin Post</p>
+          <p>Kisah petani di Desa Sungai Turak, HSU, yang menjemur gabah di tepi jalan karena rumah panggung di lahan rawa tidak memiliki halaman kering. Kabut dan minim sinar matahari dapat membuat gabah perlu dijemur berulang.</p>
+          <div className="source-takeaway"><b>Hubungannya dengan proyek</b><span>Menunjukkan keterbatasan ruang dan cuaca sebagai tantangan penjemuran. Ini contoh dari HSU, Kalimantan Selatan, bukan data kondisi petani Sleman.</span></div>
+          <div className="source-links"><a href="https://banjarmasin.tribunnews.com/kalsel/1378484/alasan-kuat-petani-sampai-jemur-padi-di-bahu-jalan-desa-sungai-turak-hsu-kalsel?page=all#goog_rewarded" target="_blank" rel="noreferrer">Baca berita lengkap <ExternalLink size={13} /></a></div>
+        </Reveal>
       </div>
       <Reveal className="sources-note" delay={180}><CircleHelp size={15} /><span>Ringkasan ini disusun untuk menjelaskan relevansi bacaan terhadap tema proyek. Silakan buka sumber aslinya untuk konteks dan informasi lengkap.</span></Reveal>
     </section>
@@ -281,13 +319,13 @@ function TeamSection() {
   return (
     <section className="team-section" id="tim">
       <div className="section-wrap team-layout">
-        <Reveal className="team-copy"><p className="eyebrow">DI BALIK GAGASAN</p><h2>Kenalkan,<br /><span>tim kami.</span></h2><p>Sebuah proyek STEM dari siswa SMPN 4 Pakem. Nama dan peran anggota dapat ditambahkan setelah daftar tim final tersedia.</p></Reveal>
+        <Reveal className="team-copy"><p className="eyebrow">DI BALIK GAGASAN</p><h2>Kenalkan,<br /><span>tim kami.</span></h2><p>Sebuah proyek STEM dari siswa SMPN 4 Pakem yang dikerjakan bersama oleh tim Pradnyasiwi Quadtech.</p></Reveal>
         <Reveal className="team-card" delay={90}>
           <div className="team-emblem"><Leaf size={27} /></div>
           <div><p className="team-label">NAMA KELOMPOK</p><h3>Pradnyasiwi<br />Quadtech</h3></div>
           <div className="team-divider" />
           <div className="team-school"><span>SMPN 4 PAKEM</span><small>Pakem · Sleman · Yogyakarta</small></div>
-          <p className="team-roster-note">Anggota & pembagian tugas: <b>menyusul dari tim.</b></p>
+          <div className="team-roster-note"><b>Anggota kelompok</b><ol><li>Aslan Alvaro Prakoso</li><li>Muhammad Arsya Nazura Nugraha Putra</li><li>Pramestri Ainun Juda Putri</li></ol></div>
         </Reveal>
       </div>
     </section>
@@ -295,24 +333,13 @@ function TeamSection() {
 }
 
 function FeedbackSection() {
-  const [feedbacks, setFeedbacks] = useState([]);
   const [name, setName] = useState('');
   const [category, setCategory] = useState('Saran');
   const [rating, setRating] = useState(5);
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    let active = true;
-    getFeedback()
-      .then((items) => { if (active) setFeedbacks(Array.isArray(items) ? items : []); })
-      .catch(() => { if (active) setError('Masukan belum dapat dimuat. Silakan coba lagi nanti.'); })
-      .finally(() => { if (active) setIsLoading(false); });
-    return () => { active = false; };
-  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -320,19 +347,20 @@ function FeedbackSection() {
     setNotice('');
     setError('');
     try {
-      const saved = await submitFeedback({
+      await submitFeedback({
         name: name.trim() || 'Pengunjung',
         category,
         rating,
         message: message.trim(),
       });
-      setFeedbacks((current) => [saved, ...current]);
       setName('');
       setMessage('');
-      setNotice('Terima kasih, masukanmu sudah tersimpan.');
-    } catch {
-      setError('Masukan belum berhasil dikirim. Coba lagi sebentar lagi.');
+      setRating(5);
+      setNotice('Terima kasih! Masukanmu sudah terkirim kepada tim.');
+    } catch (submitError) {
+      setError(submitError.message || 'Masukan belum berhasil dikirim. Coba lagi sebentar lagi.');
     } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -342,8 +370,8 @@ function FeedbackSection() {
         <Reveal className="feedback-intro">
           <p className="eyebrow">07 · SUARA PENGUNJUNG</p>
           <h2>Ceritakan <span>pendapatmu.</span></h2>
-          <p>Masukanmu membantu kami mengembangkan ide ini. Situs ini tanpa backend, jadi feedback hanya tersimpan di browser yang digunakan dan tidak terkirim ke tim.</p>
-          <div className="feedback-count"><MessageCircle size={17} /><span><b>{feedbacks.length}</b> masukan terkumpul</span></div>
+          <p>Masukanmu akan dikirim langsung ke tim Pradnyasiwi Quadtech dan hanya bisa dilihat melalui halaman pengelola.</p>
+          <div className="feedback-count"><MessageCircle size={17} /><span>Ruang aman untuk pendapatmu</span></div>
         </Reveal>
 
         <Reveal className="feedback-panel" delay={90}>
@@ -373,14 +401,6 @@ function FeedbackSection() {
             {error && <p className="feedback-error" role="alert">{error}</p>}
           </form>
 
-          <div className="feedback-list" aria-live="polite">
-            <h3>Masukan terbaru <span>{feedbacks.length}</span></h3>
-            {isLoading ? <p className="feedback-empty">Memuat masukan...</p> : feedbacks.length === 0 ? <p className="feedback-empty">Belum ada masukan. Jadilah yang pertama berbagi.</p> : feedbacks.slice(0, 3).map((item) => <article className="feedback-item" key={item.id}>
-              <div className="feedback-item-top"><b>{item.name || 'Pengunjung'}</b><span>{item.category || 'Saran'}</span></div>
-              <div className="feedback-item-rating" aria-label={`Penilaian ${item.rating || 5} dari 5`}>{[1, 2, 3, 4, 5].map((value) => <Star key={value} size={11} fill={value <= (item.rating || 5) ? 'currentColor' : 'none'} />)}</div>
-              <p>{item.message}</p>
-            </article>)}
-          </div>
         </Reveal>
       </div>
     </section>
@@ -392,6 +412,7 @@ function Footer() {
 }
 
 function App() {
+  if (window.location.pathname === '/dev/feedback') return <><Header devPage /><DevFeedback /></>;
   const [phase, setPhase] = useState('loading');
   const completeLoading = useCallback(() => setPhase('intro'), []);
   const startTransition = useCallback(() => setPhase('transition'), []);

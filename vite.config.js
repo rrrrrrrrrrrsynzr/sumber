@@ -23,6 +23,11 @@ const copyStaticProjectFiles = {
 };
 
 export default defineConfig({
-  base: hasCustomDomain ? '/' : process.env.GITHUB_ACTIONS ? `/${process.env.GITHUB_REPOSITORY?.split('/')[1] ?? ''}/` : '/',
+  base: '/',
+  server: {
+    proxy: {
+      '/api': 'http://127.0.0.1:3000',
+    },
+  },
   plugins: [react(), copyStaticProjectFiles],
 });
