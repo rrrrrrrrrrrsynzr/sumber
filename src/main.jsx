@@ -185,6 +185,7 @@ function Model3DSection() {
   const startDrag = (event) => {
     if (event.button !== undefined && event.button !== 0) return;
     dragStart.current = { x: event.clientX, y: event.clientY, rotation, tilt };
+    event.currentTarget.classList.add('is-dragging');
     event.currentTarget.setPointerCapture?.(event.pointerId);
   };
   const dragModel = (event) => {
@@ -204,6 +205,7 @@ function Model3DSection() {
     if (!dragStart.current) return;
     if (dragFrame.current) window.cancelAnimationFrame(dragFrame.current);
     dragFrame.current = 0;
+    modelObject.current?.closest('.model-stage')?.classList.remove('is-dragging');
     if (pendingPointer.current && modelObject.current) {
       const nextRotation = dragStart.current.rotation + (pendingPointer.current.x - dragStart.current.x) * .8;
       const nextTilt = Math.max(-12, Math.min(20, dragStart.current.tilt - (pendingPointer.current.y - dragStart.current.y) * .42));

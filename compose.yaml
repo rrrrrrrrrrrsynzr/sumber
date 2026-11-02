@@ -1,0 +1,24 @@
+services:
+  pradnyasiwi:
+    build: .
+    image: pradnyasiwi-quadtech:latest
+    container_name: pradnyasiwi-quadtech
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      FEEDBACK_DB_PATH: /app/data/feedback.sqlite
+      TRUST_PROXY: "true"
+    read_only: true
+    tmpfs:
+      - /tmp
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - feedback_data:/app/data
+
+volumes:
+  feedback_data:

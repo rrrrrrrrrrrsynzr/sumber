@@ -36,6 +36,7 @@ Domain yang disiapkan: `source.pradnyasiwi.web.id`. Arahkan DNS ke server Node h
 - `src/source-references.css` — tampilan kartu dan ringkasan sumber.
 - `src/intro-motion.css` — tahapan loading, orbit logo, dan transisi menuju halaman.
 - `server/` — API Express dan database SQLite.
+- `Dockerfile` dan `compose.yaml` — cara menjalankan server dengan volume database persisten.
 - `DEPLOYMENT.md` — setup server, storage, keamanan, dan domain.
 - `assets/` — ilustrasi lokal untuk hero, galeri, dan ikon.
 - `files/` — dokumen PDF sumber penelitian.

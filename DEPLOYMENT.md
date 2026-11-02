@@ -5,7 +5,7 @@ Aplikasi sekarang terdiri dari frontend React/Vite dan backend Node/Express deng
 ## Syarat
 
 - Node.js 22.x
-- Linux x64 (binary `better-sqlite3` sudah dibundel untuk lingkungan Linux x64 pada lockfile)
+- Platform Linux x64/ARM64 yang didukung `better-sqlite3` (modul native akan di-build/install pada host)
 - Reverse proxy TLS seperti Caddy/Nginx di production
 - Volume persisten untuk file SQLite
 
@@ -18,6 +18,10 @@ Aplikasi sekarang terdiri dari frontend React/Vite dan backend Node/Express deng
 5. Atur reverse proxy agar HTTPS untuk `source.pradnyasiwi.web.id` diteruskan ke port aplikasi. Gunakan Let's Encrypt atau sertifikat TLS dari host.
 6. Arahkan DNS record A/AAAA atau CNAME `source` ke host. Jangan mengarahkan custom domain ini ke GitHub Pages jika API feedback harus berfungsi.
 7. Siapkan proses supervisor (systemd, Docker Compose, PM2, atau layanan managed) agar aplikasi restart saat boot.
+
+### Opsi Docker Compose
+
+Salin `.env.example` sebagai `.env`, ganti nama pengguna dan kata sandi admin, lalu jalankan `docker compose up -d --build`. Container menerbitkan port `3000` hanya ke localhost dan menyimpan SQLite pada named volume `feedback_data`. Hubungkan Caddy/Nginx di host ke `127.0.0.1:3000` untuk TLS.
 
 Contoh Environment:
 
