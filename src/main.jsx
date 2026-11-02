@@ -4,6 +4,8 @@ import {
   ArrowDown,
   ArrowUpRight,
   CircleHelp,
+  ExternalLink,
+  FileText,
   Leaf,
   MessageCircle,
   Menu,
@@ -18,6 +20,7 @@ import './styles.css';
 import './intro-motion.css';
 import './content-layout.css';
 import './feedback.css';
+import './source-references.css';
 import { getFeedback, submitFeedback } from './feedback-service.js';
 
 const asset = (filename) => `${import.meta.env.BASE_URL}assets/${filename}`;
@@ -247,15 +250,29 @@ function SourcesSection() {
   return (
     <section className="sources-section source-first section-wrap" id="sumber">
       <Reveal className="sources-heading">
-        <p className="eyebrow">LANDASAN PROYEK · RUJUKAN UTAMA</p>
-        <h1>Sumber & <span>referensi.</span></h1>
-        <p>Rujukan yang dipakai tim akan ditempatkan di sini terlebih dahulu, sebelum dokumentasi dan materi pendukung lainnya.</p>
+        <p className="eyebrow">RUJUKAN PROYEK · BACAAN PILIHAN</p>
+        <h1>Mulai dari <span>sumbernya.</span></h1>
+        <p>Dua bacaan ini membantu memberi konteks pada keselamatan kerja dan paparan panas. Keduanya bukan uji langsung terhadap prototipe penjemur padi kami.</p>
       </Reveal>
-      <Reveal className="source-board" delay={80}>
-        <div className="source-board-header"><span className="source-led" /> DAFTAR RUJUKAN TIM <span className="source-board-count">MENUNGGU MATERI</span></div>
-        <div className="source-empty"><span className="sources-icon"><span>↗</span></span><div><h2>Sumbernya menyusul dari tim.</h2><p>Belum ada tautan, judul, atau data rujukan yang diberikan. Setelah materi diterima, daftar sumber akan tampil di bagian utama ini—tanpa placeholder yang dianggap sebagai fakta.</p></div></div>
-        <div className="source-topics" aria-label="Kelompok referensi yang akan dilengkapi"><span>01 · Pertanian padi</span><span>02 · Penjemuran gabah</span><span>03 · Keselamatan pekerja</span><span>04 · Sleman Berdaya</span></div>
-      </Reveal>
+      <div className="source-grid">
+        <Reveal as="article" className="source-card" delay={60}>
+          <div className="source-card-top"><span className="source-card-icon"><FileText size={18} /></span><span className="source-kind">ARTIKEL PENELITIAN · 2022</span></div>
+          <h2>Risiko postur kerja dan metode REBA</h2>
+          <p className="source-byline">Indah Permatasari, Mayumi Nitami, Erna Veronika, & Decy Situngkir · 2022</p>
+          <p>Penelitian deskriptif pada 29 petani rumput laut di Pantai Mekar. Pada tahap penjemuran, 66,7% pekerja berada pada risiko postur tinggi dan 13,3% sangat tinggi; tahap penanaman seluruhnya berisiko sedang. Konteksnya rumput laut, bukan padi—angka ini bukan hasil uji alat kami.</p>
+          <div className="source-takeaway"><b>Hubungannya dengan proyek</b><span>Menjadi bacaan pembanding untuk memperhatikan ergonomi saat merancang alat bantu pertanian.</span></div>
+          <div className="source-links"><a href="https://jca.esaunggul.ac.id/index.php/jhea/article/view/136" target="_blank" rel="noreferrer">Buka laman jurnal <ExternalLink size={13} /></a><a href={`${import.meta.env.BASE_URL}files/Postur%20tubuh.pdf`} target="_blank" rel="noreferrer">Buka PDF <FileText size={13} /></a></div>
+        </Reveal>
+        <Reveal as="article" className="source-card" delay={130}>
+          <div className="source-card-top"><span className="source-card-icon source-health-icon"><Leaf size={18} /></span><span className="source-kind">INFORMASI KESEHATAN · 2026</span></div>
+          <h2>Mengenali risiko heat stroke</h2>
+          <p className="source-byline">Tim Medis Siloam Hospitals · 22 Januari 2026</p>
+          <p>Artikel menjelaskan heat stroke sebagai kondisi darurat akibat paparan panas, termasuk ketika aktivitas fisik berat dilakukan dalam cuaca panas. Pengenalan gejala dan pertolongan medis cepat penting; ringkasan ini bukan panduan diagnosis.</p>
+          <div className="source-takeaway"><b>Hubungannya dengan proyek</b><span>Memberi konteks keselamatan saat bekerja di lingkungan panas. Alat ini belum terbukti mencegah heat stroke.</span></div>
+          <div className="source-links"><a href="https://www.siloamhospitals.com/informasi-siloam/artikel/heat-stroke-adalah" target="_blank" rel="noreferrer">Baca artikel Siloam <ExternalLink size={13} /></a></div>
+        </Reveal>
+      </div>
+      <Reveal className="sources-note" delay={180}><CircleHelp size={15} /><span>Ringkasan ini disusun untuk menjelaskan relevansi bacaan terhadap tema proyek. Silakan buka sumber aslinya untuk konteks dan informasi lengkap.</span></Reveal>
     </section>
   );
 }

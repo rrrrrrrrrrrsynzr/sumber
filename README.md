@@ -21,10 +21,12 @@ Form feedback menyimpan masukan hanya di `localStorage` pada browser pengunjung.
 
 Workflow di `.github/workflows/pages.yml` menerbitkan situs secara otomatis setiap kali ada push ke branch `main`. Setelah workflow pertama berhasil, pastikan **Settings → Pages → Build and deployment → Source** memakai **GitHub Actions**. URL situs akan muncul di halaman Pages dan pada hasil workflow.
 
+Domain khusus yang disiapkan: `source.pradnyasiwi.web.id`. Supaya domain dan tautan PDF aktif, tambahkan DNS CNAME `source` yang mengarah ke `rrrrrrrrrrrsynzr.github.io`, lalu atur domain yang sama pada **Settings → Pages → Custom domain**. DNS dikelola di penyedia domain dan tidak dapat diubah dari repository ini.
+
 ## Konten yang perlu dilengkapi
 
-- Ganti ilustrasi galeri dan bagian cerita/behind-the-scenes dengan dokumentasi proyek.
-- Tambahkan sumber dan referensi resmi pada bagian Referensi & Sumber setelah daftar rujukan tersedia.
+- Ganti ilustrasi galeri dengan dokumentasi alat dan proses asli.
+- Sumber yang ditampilkan sekarang: penelitian postur kerja petani rumput laut dengan REBA, artikel Siloam tentang heat stroke, dan salinan PDF penelitian di `files/Postur tubuh.pdf`.
 - Perbarui deskripsi cara kerja, spesifikasi, dan manfaat sesuai kemampuan alat yang sudah diuji.
 - Ilustrasi dan ikon disimpan sebagai SVG lokal di `assets/`.
 
@@ -33,6 +35,9 @@ Workflow di `.github/workflows/pages.yml` menerbitkan situs secara otomatis seti
 - `src/main.jsx` — halaman dan komponen React.
 - `src/styles.css` — desain responsif halaman dan dukungan reduced motion.
 - `src/content-layout.css` — hierarki sumber di halaman awal, model konseptual yang dapat diputar, dan bagian kelompok.
+- `src/source-references.css` — tampilan kartu dan ringkasan sumber.
 - `src/intro-motion.css` — tahapan loading, orbit logo, dan transisi menuju halaman.
 - `assets/` — ilustrasi lokal untuk hero, galeri, dan ikon.
+- `files/` — dokumen PDF sumber penelitian.
+- `CNAME` — domain khusus GitHub Pages.
 - `.github/workflows/pages.yml` — build dan deploy otomatis ke GitHub Pages.
