@@ -39,7 +39,7 @@ Jangan commit `.env` atau kirim kredensial admin di frontend. SQLite menyimpan d
 
 ## Pengembangan lokal
 
-- `npm run dev:full` menjalankan Vite dan API server bersamaan. Vite meneruskan `/api` ke `localhost:3000`.
+- `npm run dev:full` menjalankan Vite dan API server bersamaan. API lokal memakai port `3001`; Vite meneruskan `/api` ke `localhost:3001` dan mempercayai satu proxy lokal agar tunnel HTTPS tetap lolos pemeriksaan origin. Arahkan Cloudflare Tunnel ke port Vite yang tercetak saat server mulai.
 - Buat `.env` dari `.env.example` sebelum memakai API.
 - `npm run build && npm start` menjalankan build production lokal di port `3000`.
 
