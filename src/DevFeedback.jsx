@@ -86,7 +86,7 @@ export default function DevFeedback() {
             <button type="submit" disabled={isLoading}>{isLoading ? 'Memeriksa akses…' : 'Masuk dan lihat masukan'}</button>
           </form>
           {error && <p className="dev-error" role="alert">{error}</p>}
-          <p className="dev-private-note"><ShieldCheck size={14} /> Akses memakai kredensial server; tidak ada kata sandi admin di dalam kode halaman.</p>
+          <p className="dev-private-note"><ShieldCheck size={14} /> Akses memerlukan kredensial server. Kata sandi admin tidak disimpan di kode halaman.</p>
         </section>
       </main>
     );
@@ -101,7 +101,7 @@ export default function DevFeedback() {
       <section className="dev-dashboard-content">
         <p className="dev-eyebrow">PRADNYASIWI QUADTECH · INTERNAL</p>
         <div className="dev-title-row"><div><h1>Masukan pengunjung</h1><p>Hanya baca · Masukan tidak ditampilkan di halaman publik.</p></div><button className="dev-refresh" type="button" onClick={() => loadFeedback(credentials)} disabled={isLoading}><RefreshCw size={15} className={isLoading ? 'is-spinning' : ''} /> Muat ulang</button></div>
-        <div className="dev-stats"><span><MessageCircle size={18} /><b>{total}</b><small>total masukan</small></span><span><Star size={18} /><b>{feedback.length ? (feedback.reduce((sum, item) => sum + item.rating, 0) / feedback.length).toFixed(1) : '—'}</b><small>rata-rata dari daftar</small></span></div>
+        <div className="dev-stats"><span><MessageCircle size={18} /><b>{total}</b><small>total masukan</small></span><span><Star size={18} /><b>{feedback.length ? (feedback.reduce((sum, item) => sum + item.rating, 0) / feedback.length).toFixed(1) : 'Belum ada'}</b><small>rata-rata dari daftar</small></span></div>
         {error && <p className="dev-error" role="alert">{error}</p>}
         <div className="dev-feedback-list" aria-live="polite">
           {isLoading && feedback.length === 0 ? <p className="dev-empty">Memuat masukan…</p> : null}

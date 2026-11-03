@@ -154,7 +154,7 @@ function Header({ devPage = false }) {
           <a href="#model" onClick={closeMenu}>Model 3D</a>
           <a href="#dokumentasi" onClick={closeMenu}>Dokumentasi</a>
           <a href="#tim" onClick={closeMenu}>Tim</a>
-          <a className="nav-cta" href="#feedback" onClick={closeMenu}>Feedback <ArrowUpRight size={14} /></a>
+          <a href="#feedback" onClick={closeMenu}>Feedback</a>
         </>}
       </nav>
     </header>
@@ -257,7 +257,7 @@ function SourcesSection() {
           <div className="source-card-top"><span className="source-card-icon"><FileText size={18} /></span><span className="source-kind">ARTIKEL PENELITIAN · 2022</span></div>
           <h2>Risiko postur kerja dan metode REBA</h2>
           <p className="source-byline">Indah Permatasari, Mayumi Nitami, Erna Veronika, & Decy Situngkir · 2022</p>
-          <p>Penelitian deskriptif pada 29 petani rumput laut di Pantai Mekar. Pada tahap penjemuran, 66,7% pekerja berada pada risiko postur tinggi dan 13,3% sangat tinggi; tahap penanaman seluruhnya berisiko sedang. Konteksnya rumput laut, bukan padi—angka ini bukan hasil uji alat kami.</p>
+          <p>Penelitian pada 29 petani rumput laut di Pantai Mekar menunjukkan risiko postur tinggi pada 66,7% pekerja saat menjemur dan risiko sangat tinggi pada 13,3% pekerja. Pada tahap penanaman, seluruh pekerja berada pada risiko sedang. Penelitian ini membahas rumput laut, bukan padi, dan angkanya bukan hasil uji alat kami.</p>
           <div className="source-takeaway"><b>Hubungannya dengan proyek</b><span>Menjadi bacaan pembanding untuk memperhatikan ergonomi saat merancang alat bantu pertanian.</span></div>
           <div className="source-links"><a href="https://jca.esaunggul.ac.id/index.php/jhea/article/view/136" target="_blank" rel="noreferrer">Buka laman jurnal <ExternalLink size={13} /></a><a href={`${import.meta.env.BASE_URL}files/Postur%20tubuh.pdf`} target="_blank" rel="noreferrer">Buka PDF <FileText size={13} /></a></div>
         </Reveal>
@@ -265,7 +265,7 @@ function SourcesSection() {
           <div className="source-card-top"><span className="source-card-icon source-health-icon"><Leaf size={18} /></span><span className="source-kind">INFORMASI KESEHATAN · 2026</span></div>
           <h2>Mengenali risiko heat stroke</h2>
           <p className="source-byline">Tim Medis Siloam Hospitals · 22 Januari 2026</p>
-          <p>Artikel menjelaskan heat stroke sebagai kondisi darurat akibat paparan panas, termasuk ketika aktivitas fisik berat dilakukan dalam cuaca panas. Pengenalan gejala dan pertolongan medis cepat penting; ringkasan ini bukan panduan diagnosis.</p>
+          <p>Artikel menjelaskan heat stroke sebagai kondisi darurat akibat paparan panas, termasuk saat melakukan aktivitas fisik berat dalam cuaca panas. Mengenali gejala dan segera mencari pertolongan medis sangat penting. Ringkasan ini bukan panduan diagnosis.</p>
           <div className="source-takeaway"><b>Hubungannya dengan proyek</b><span>Memberi konteks keselamatan saat bekerja di lingkungan panas. Alat ini belum terbukti mencegah heat stroke.</span></div>
           <div className="source-links"><a href="https://www.siloamhospitals.com/informasi-siloam/artikel/heat-stroke-adalah" target="_blank" rel="noreferrer">Baca artikel Siloam <ExternalLink size={13} /></a></div>
         </Reveal>

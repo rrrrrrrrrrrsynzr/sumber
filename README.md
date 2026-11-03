@@ -30,15 +30,15 @@ Domain yang disiapkan: `source.pradnyasiwi.web.id`. Arahkan DNS ke server Node h
 
 ## Berkas
 
-- `src/main.jsx` — halaman dan komponen React.
-- `src/styles.css` — desain responsif halaman dan dukungan reduced motion.
-- `src/content-layout.css` — hierarki sumber di halaman awal, model konseptual yang dapat diputar, dan bagian kelompok.
-- `src/source-references.css` — tampilan kartu dan ringkasan sumber.
-- `src/intro-motion.css` — tahapan loading, orbit logo, dan transisi menuju halaman.
-- `server/` — API Express dan database SQLite.
-- `Dockerfile` dan `compose.yaml` — cara menjalankan server dengan volume database persisten.
-- `DEPLOYMENT.md` — setup server, storage, keamanan, dan domain.
-- `assets/` — ilustrasi lokal untuk hero, galeri, dan ikon.
-- `files/` — dokumen PDF sumber penelitian.
-- `CNAME` — domain khusus GitHub Pages.
-- `.github/workflows/pages.yml` — build dan deploy otomatis ke GitHub Pages.
+- `src/main.jsx`: halaman dan komponen React.
+- `src/styles.css`: desain responsif halaman dan dukungan reduced motion.
+- `src/content-layout.css`: hierarki sumber di halaman awal, model konseptual yang dapat diputar, dan bagian kelompok.
+- `src/source-references.css`: tampilan kartu dan ringkasan sumber.
+- `src/intro-motion.css`: tahapan loading, animasi logo, dan transisi menuju halaman.
+- `server/`: API Express dan database SQLite.
+- `Dockerfile` dan `compose.yaml`: cara menjalankan server dengan volume database persisten.
+- `DEPLOYMENT.md`: panduan deployment, penyimpanan, keamanan, dan domain.
+- `assets/`: ilustrasi lokal untuk hero, galeri, dan ikon.
+- `files/`: dokumen PDF sumber penelitian.
+- `CNAME`: domain khusus situs.
+- `.github/workflows/pages.yml`: build dan deployment otomatis.
