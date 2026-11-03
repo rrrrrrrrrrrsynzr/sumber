@@ -1,95 +1,29 @@
 import { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { ContactShadows, OrbitControls } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 
-function DryingRack() {
+const UNIT_IDS = Array.from({ length: 6 }, (_, index) => `alat-${index + 1}`);
+
+function CoreUnit({ index }) {
+  const column = index % 3;
+  const row = Math.floor(index / 3);
+  const position = [(column - 1) * 2.75, 0, (row - 0.5) * 2.6];
+  const statusColor = '#8d9990';
+
   return (
-    <group>
-      {[0, 1, 2].map((level) => (
-        <group key={level} position={[0, 1.12 + level * 0.39, 0]}>
-          <mesh castShadow receiveShadow>
-            <boxGeometry args={[1.92, 0.075, 1.12]} />
-            <meshStandardMaterial color="#b98a43" roughness={0.72} />
-          </mesh>
-          {Array.from({ length: 11 }, (_, index) => (
-            <mesh key={index} position={[-0.86 + index * 0.172, 0.045, 0]}>
-              <boxGeometry args={[0.022, 0.025, 1.02]} />
-              <meshStandardMaterial color="#f0d28b" roughness={0.6} />
-            </mesh>
-          ))}
-        </group>
-      ))}
-    </group>
-  );
-}
-
-function DryerModel() {
-  return (
-    <group position={[0, -0.26, 0]}>
-      {/* Four-legged mobile frame */}
-      {[-1, 1].flatMap((x) => [-1, 1].map((z) => (
-        <group key={`${x}-${z}`} position={[x * 0.92, 0, z * 0.48]}>
-          <mesh position={[0, 0.65, 0]} castShadow receiveShadow>
-            <boxGeometry args={[0.105, 1.28, 0.105]} />
-            <meshStandardMaterial color="#537b78" metalness={0.42} roughness={0.38} />
-          </mesh>
-          <mesh position={[0, 0.12, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-            <cylinderGeometry args={[0.19, 0.19, 0.12, 32]} />
-            <meshStandardMaterial color="#315258" metalness={0.28} roughness={0.52} />
-          </mesh>
-          <mesh position={[0, 0.12, 0.066]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.075, 0.075, 0.126, 24]} />
-            <meshStandardMaterial color="#d9d9c8" metalness={0.2} roughness={0.42} />
-          </mesh>
-        </group>
-      )))}
-
-      {/* Raised drying chamber and visible grain trays */}
-      <mesh position={[0, 1.86, 0]} castShadow receiveShadow>
-        <boxGeometry args={[2.12, 1.35, 1.2]} />
-        <meshStandardMaterial color="#668b84" metalness={0.16} roughness={0.46} transparent opacity={0.2} depthWrite={false} />
+    <group position={position}>
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1.5, 0.34, 1.15]} />
+        <meshStandardMaterial color="#253b32" roughness={0.45} metalness={0.18} />
       </mesh>
-      <DryingRack />
-
-      {/* Solid frame rails around the clear chamber */}
-      {[-1, 1].flatMap((x) => [-1, 1].map((z) => (
-        <mesh key={`rail-${x}-${z}`} position={[x * 1.04, 1.86, z * 0.58]} castShadow>
-          <boxGeometry args={[0.075, 1.4, 0.075]} />
-          <meshStandardMaterial color="#426b68" metalness={0.34} roughness={0.4} />
-        </mesh>
-      )))}
-      {[-1, 1].map((z) => (
-        <mesh key={`crossbar-${z}`} position={[0, 1.2, z * 0.58]} castShadow>
-          <boxGeometry args={[2.12, 0.07, 0.07]} />
-          <meshStandardMaterial color="#527c76" metalness={0.3} roughness={0.4} />
-        </mesh>
-      ))}
-
-      {/* Sloped weather cover with translucent front visor */}
-      <mesh position={[0, 2.62, 0]} rotation={[0.035, 0, -0.055]} castShadow receiveShadow>
-        <boxGeometry args={[2.48, 0.16, 1.48]} />
-        <meshStandardMaterial color="#315f67" metalness={0.32} roughness={0.34} />
+      <mesh position={[0, 0.23, 0]}>
+        <boxGeometry args={[1.12, 0.16, 0.78]} />
+        <meshStandardMaterial color={statusColor} roughness={0.4} metalness={0.12} />
       </mesh>
-      <mesh position={[0, 2.72, 0]} rotation={[0.035, 0, -0.055]} castShadow>
-        <boxGeometry args={[2.14, 0.045, 1.16]} />
-        <meshStandardMaterial color="#86a9a0" metalness={0.28} roughness={0.38} />
+      <mesh position={[0, 0.34, 0]}>
+        <boxGeometry args={[0.26, 0.05, 0.26]} />
+        <meshStandardMaterial color="#f0f3db" emissive={statusColor} emissiveIntensity={0.24} />
       </mesh>
-
-      {/* Small control panel: a visual detail, not a functional control */}
-      <mesh position={[0.78, 1.06, 0.53]} rotation={[-0.12, 0, 0]} castShadow>
-        <boxGeometry args={[0.36, 0.28, 0.09]} />
-        <meshStandardMaterial color="#f5f2e7" roughness={0.42} />
-      </mesh>
-      <mesh position={[0.78, 1.08, 0.584]}>
-        <boxGeometry args={[0.2, 0.09, 0.018]} />
-        <meshStandardMaterial color="#78a69a" emissive="#315f55" emissiveIntensity={0.12} />
-      </mesh>
-      {[-0.06, 0.06].map((x, index) => (
-        <mesh key={x} position={[0.78 + x, 0.99, 0.585]}>
-          <sphereGeometry args={[0.025, 16, 12]} />
-          <meshStandardMaterial color={index === 0 ? '#d6a957' : '#7b9b70'} />
-        </mesh>
-      ))}
     </group>
   );
 }
@@ -98,21 +32,20 @@ function Scene({ controlsRef }) {
   return (
     <>
       <color attach="background" args={['#f1f5ee']} />
-      <ambientLight intensity={1.35} />
-      <directionalLight position={[4, 7, 5]} intensity={2.25} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
-      <directionalLight position={[-4, 3, -4]} intensity={0.8} color="#a6c5a5" />
-      <gridHelper args={[8, 16, '#b7c8b7', '#dce5d8']} position={[0, -0.02, 0]} />
-      <DryerModel />
-      <ContactShadows position={[0, -0.015, 0]} opacity={0.28} scale={5.5} blur={2.4} far={2.4} />
+      <ambientLight intensity={1.7} />
+      <directionalLight position={[4, 8, 5]} intensity={2.2} />
+      <directionalLight position={[-5, 4, -4]} intensity={0.8} color="#91ad83" />
+      <gridHelper args={[12, 16, '#829385', '#c4cec4']} position={[0, -0.72, 0]} />
+      {UNIT_IDS.map((deviceId, index) => <CoreUnit key={deviceId} index={index} />)}
       <OrbitControls
         ref={controlsRef}
         makeDefault
         enablePan={false}
-        minDistance={4.1}
-        maxDistance={8}
-        minPolarAngle={0.42}
-        maxPolarAngle={1.42}
-        target={[0, 1.18, 0]}
+        minDistance={7}
+        maxDistance={15}
+        minPolarAngle={0.55}
+        maxPolarAngle={1.45}
+        target={[0, 0, 0]}
       />
     </>
   );
@@ -132,19 +65,24 @@ export default function DryerModel3D({ controlsRef }) {
 
   if (!webglAvailable) {
     return (
-      <div className="model-stage model-stage-fallback" role="img" aria-label="Ilustrasi konsep penjemur padi otomatis">
-        <div className="fallback-sun" />
-        <div className="fallback-roof" />
-        <div className="fallback-chamber"><span /><span /><span /></div>
-        <div className="fallback-legs"><i /><i /><i /><i /></div>
+      <div className="model-stage model-stage-fallback" role="img" aria-label="Diagram skematis enam Core Unit">
+        <div className="model-unit-fallback-grid">
+          {UNIT_IDS.map((deviceId, index) => (
+            <div className="model-unit-fallback" key={deviceId}>
+              <span className="model-unit-indicator" />
+              <strong>Core Unit {index + 1}</strong>
+              <small>{deviceId}</small>
+            </div>
+          ))}
+        </div>
         <p>Pratinjau 3D tidak tersedia di perangkat ini.</p>
       </div>
     );
   }
 
   return (
-    <div className="model-stage model-stage-3d" role="img" aria-label="Model konseptual penjemur padi otomatis. Seret untuk memutar, gulir untuk memperbesar atau memperkecil.">
-      <Canvas camera={{ position: [4.8, 3.5, 5.2], fov: 34 }} dpr={[1, 1.5]} shadows gl={{ antialias: true, alpha: false }}>
+    <div className="model-stage model-stage-3d" role="img" aria-label="Diagram skematis enam Core Unit. Seret untuk memutar, gulir untuk memperbesar atau memperkecil.">
+      <Canvas camera={{ position: [9, 8, 12], fov: 36 }} dpr={[1, 1.5]} gl={{ preserveDrawingBuffer: true }}>
         <Scene controlsRef={controlsRef} />
       </Canvas>
       <span className="model-3d-hint">SERET UNTUK MEMUTAR · GULIR UNTUK ZOOM</span>

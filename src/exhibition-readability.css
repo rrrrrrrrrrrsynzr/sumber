@@ -140,62 +140,44 @@ main .button {
 
 .model-stage-fallback {
   display: grid;
-  justify-items: center;
-  align-content: center;
+  place-items: center;
   background: radial-gradient(ellipse at 50% 45%, #fff 0%, #f1f5ee 72%);
 }
 
-.fallback-sun {
-  position: absolute;
-  top: 13%;
-  right: 17%;
-  width: 54px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #f5e5bb;
-  box-shadow: 0 0 0 11px #fff8;
-}
-
-.fallback-roof {
-  z-index: 1;
-  width: min(60%, 300px);
-  height: 24px;
-  border: 1px solid #527a78;
-  border-radius: 8px 8px 2px 2px;
-  background: linear-gradient(160deg, #7ea69f, #426c6f);
-  transform: skewY(-4deg);
-}
-
-.fallback-chamber {
-  z-index: 1;
+.model-unit-fallback-grid {
   display: grid;
-  gap: 12px;
-  width: min(53%, 266px);
-  height: 126px;
-  padding: 15px 13px;
-  border: 5px solid #537d78;
-  border-top: 0;
-  background: #ffffff70;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  width: min(88%, 580px);
 }
 
-.fallback-chamber span {
-  display: block;
-  border: 1px solid #b78b49;
-  background: repeating-linear-gradient(90deg, #f1d28c 0 7px, #dfbd72 7px 10px);
+.model-unit-fallback {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 18px 10px;
+  border: 1px solid #dfe7dd;
+  border-radius: 8px;
+  background: #fff;
+  color: #35575b;
+  box-shadow: 0 8px 18px #3155720a;
 }
 
-.fallback-legs {
-  display: flex;
-  justify-content: space-between;
-  width: min(50%, 250px);
-  height: 62px;
-  border-bottom: 12px solid #38585c;
+.model-unit-indicator {
+  width: 15px;
+  height: 15px;
+  border: 4px solid #e8eee7;
+  border-radius: 50%;
+  background: #8d9990;
 }
 
-.fallback-legs i {
-  width: 10px;
-  height: 100%;
-  background: #537b78;
+.model-unit-fallback strong {
+  font-size: 13px;
+}
+
+.model-unit-fallback small {
+  color: #61736f;
+  font-size: 11px;
 }
 
 .model-stage-fallback p {
@@ -207,6 +189,25 @@ main .button {
   color: #52666d;
   font-size: 13px;
   text-align: center;
+}
+
+@media (max-width: 520px) {
+  .model-unit-fallback-grid {
+    gap: 8px;
+    width: 92%;
+  }
+
+  .model-unit-fallback {
+    padding: 13px 5px;
+  }
+
+  .model-unit-fallback strong {
+    font-size: 11px;
+  }
+
+  .model-unit-fallback small {
+    font-size: 10px;
+  }
 }
 
 .model-controls .model-reset {

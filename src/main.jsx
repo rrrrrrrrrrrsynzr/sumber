@@ -202,7 +202,7 @@ function Model3DSection() {
         <Reveal className="model-copy">
           <p className="eyebrow">MODEL INTERAKTIF · KONSEP</p>
           <h2>Lihat dari<br /><span>sudut pandangmu.</span></h2>
-          <p>Seret model untuk melihat konsep penjemur padi dari berbagai sisi. Bentuk ini masih ilustrasi awal dan akan disesuaikan setelah foto prototipe tersedia.</p>
+          <p>Model skematis ini menampilkan enam Core Unit. Posisi fisik dan koneksi antarunit belum dipetakan, sehingga susunannya hanya sebagai gambaran umum.</p>
           <div className="model-controls">
             <button type="button" className="model-reset" onClick={() => controlsRef.current?.reset()} aria-label="Kembalikan sudut model"><RotateCcw size={14} /> Atur ulang sudut</button>
           </div>
