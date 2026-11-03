@@ -184,7 +184,7 @@ function Model3DSection() {
   const [modelReady, setModelReady] = useState(false);
 
   useEffect(() => {
-    const section = sectionRef.current;
+    const section = sectionRef.current;feedback 
     if (!section || modelReady) return undefined;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
