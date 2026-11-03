@@ -1,0 +1,268 @@
+/* Exhibition-first text sizing and contrast. */
+.brand-mark,
+.brand-mark-large {
+  overflow: hidden;
+  border: 0;
+  border-radius: 50%;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.brand-mark::before,
+.brand-mark::after {
+  content: none !important;
+}
+
+.brand-mark object {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: none;
+}
+
+.wordmark {
+  gap: 10px;
+  font-size: 13px;
+}
+
+.team-emblem {
+  overflow: hidden;
+  padding: 5px;
+  background: #fff;
+}
+
+.team-emblem .brand-mark {
+  width: 100%;
+  height: 100%;
+}
+
+.main-nav,
+.footer,
+.footer p {
+  font-size: 14px;
+}
+
+.main-nav a {
+  font-size: 14px;
+}
+
+.eyebrow {
+  color: #526d70;
+  font-size: 12px;
+  letter-spacing: .12em;
+}
+
+main p:not(.eyebrow) {
+  color: #405863;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+main small,
+main .source-byline {
+  color: #52666d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+main .source-takeaway span,
+main .team-roster-note ol,
+main .gallery-note,
+main .model-disclaimer {
+  color: #4a6067;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+main label,
+main input,
+main select,
+main textarea,
+main button,
+main .button {
+  font-size: 14px;
+}
+
+.model-viewer-top,
+.model-viewer-foot,
+.model-drag-hint,
+.source-kind,
+.source-board-header,
+.source-board-count {
+  color: #536a6c;
+  font-size: 11px;
+  letter-spacing: .06em;
+}
+
+.model-stage-3d {
+  background: #f1f5ee;
+  cursor: grab;
+  touch-action: none;
+}
+
+.model-stage-3d:active {
+  cursor: grabbing;
+}
+
+.model-stage-3d::after {
+  content: none;
+}
+
+.model-stage-3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.model-3d-hint {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  padding: 8px 11px;
+  border: 1px solid #dfe8de;
+  border-radius: 20px;
+  background: #ffffffd9;
+  color: #526a62;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  pointer-events: none;
+}
+
+.model-stage-loading {
+  display: grid;
+  place-items: center;
+  background: #f1f5ee;
+  color: #405863;
+  font-size: 16px;
+}
+
+.model-stage-fallback {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  background: radial-gradient(ellipse at 50% 45%, #fff 0%, #f1f5ee 72%);
+}
+
+.fallback-sun {
+  position: absolute;
+  top: 13%;
+  right: 17%;
+  width: 54px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #f5e5bb;
+  box-shadow: 0 0 0 11px #fff8;
+}
+
+.fallback-roof {
+  z-index: 1;
+  width: min(60%, 300px);
+  height: 24px;
+  border: 1px solid #527a78;
+  border-radius: 8px 8px 2px 2px;
+  background: linear-gradient(160deg, #7ea69f, #426c6f);
+  transform: skewY(-4deg);
+}
+
+.fallback-chamber {
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+  width: min(53%, 266px);
+  height: 126px;
+  padding: 15px 13px;
+  border: 5px solid #537d78;
+  border-top: 0;
+  background: #ffffff70;
+}
+
+.fallback-chamber span {
+  display: block;
+  border: 1px solid #b78b49;
+  background: repeating-linear-gradient(90deg, #f1d28c 0 7px, #dfbd72 7px 10px);
+}
+
+.fallback-legs {
+  display: flex;
+  justify-content: space-between;
+  width: min(50%, 250px);
+  height: 62px;
+  border-bottom: 12px solid #38585c;
+}
+
+.fallback-legs i {
+  width: 10px;
+  height: 100%;
+  background: #537b78;
+}
+
+.model-stage-fallback p {
+  position: absolute;
+  right: 14px;
+  bottom: 8px;
+  left: 14px;
+  margin: 0;
+  color: #52666d;
+  font-size: 13px;
+  text-align: center;
+}
+
+.model-controls .model-reset {
+  min-height: 42px;
+  padding-inline: 16px;
+  font-size: 14px;
+}
+
+.blank-loading {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 24px;
+  background: #f4f7f1;
+  text-align: center;
+}
+
+.blank-loading > object {
+  width: 82px;
+  height: 82px;
+  border: 0;
+  filter: drop-shadow(0 8px 18px #345d5722);
+}
+
+.blank-loading p {
+  max-width: 430px;
+  margin: 0;
+  color: #405863;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.blank-loading .loading-title {
+  color: #214456;
+  font: 800 23px/1.2 var(--display);
+}
+
+.blank-loading .loading-fact b {
+  color: #315e58;
+}
+
+@media (max-width: 650px) {
+  main p:not(.eyebrow) {
+    font-size: 15px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+  }
+
+  .main-nav a {
+    font-size: 15px;
+  }
+
+  .blank-loading .loading-title {
+    font-size: 21px;
+  }
+}

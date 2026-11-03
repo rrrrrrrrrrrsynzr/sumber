@@ -1,4 +1,4 @@
-/* Intro/loading choreography - standalone so the school mark and its orbit remain easy to replace independently. */
+/* Intro/loading choreography for the school mark and exhibition welcome screen. */
 .splash-loader,
 .brand-intro {
   position: fixed;
@@ -192,38 +192,26 @@
 .cloud-two { left:auto; top:37%; right:10%; transform:scale(.7); animation-delay: .8s, 2s; animation-direction:normal,reverse; animation-duration:700ms,22s; }
 .intro-content { position:relative; z-index:2; padding:24px; margin-top:34px; text-align:center; animation:intro-content-arrive 850ms .28s cubic-bezier(.16,1,.3,1) both; }
 .intro-logo-stage { position:relative; display:grid; place-items:center; width:184px; height:184px; margin:0 auto 14px; }
-.school-emblem { position:relative; z-index:2; display:grid; place-items:center; width:102px; height:102px; border:1px solid #ffffffdd; border-radius:50%; background:#fffdf3e8; box-shadow:0 10px 38px #315c5a26, inset 0 0 0 7px #fff9; animation:emblem-breathe 4s ease-in-out infinite; }
-.school-emblem .brand-mark-large { width:66px; height:66px; margin:0; background:transparent; box-shadow:none; }
-.school-emblem .brand-mark-large::after { inset:6px; }
-.school-emblem .brand-mark-large .brand-mark-center { color:#59836e; }
-.school-emblem .brand-mark-large .brand-mark-center svg { width:31px; height:31px; }
-.emblem-highlight { position:absolute; inset:6px; border-radius:50%; background:linear-gradient(135deg,#fff9 0%,transparent 42%); pointer-events:none; }
-.logo-orbit { position:absolute; left:50%; top:50%; display:block; border:1px solid #fff9; border-radius:50%; transform:translate(-50%,-50%); }
-.orbit-outer { width:176px; height:108px; animation:logo-orbit-rotate 6s linear infinite; }
-.orbit-inner { width:150px; height:150px; border-color:#fff8; border-style:dashed; animation:logo-orbit-rotate 15s linear infinite reverse; }
-.logo-orbit i { position:absolute; top:50%; left:-5px; width:10px; height:10px; border:2px solid #fff4dc; border-radius:50%; background:#d2a84e; box-shadow:0 0 12px #fff8; transform:translateY(-50%); }
-.orbit-inner i { top:50%; left:auto; right:-4px; width:7px; height:7px; background:#6b9581; }
-.orbit-spark { position:absolute; z-index:3; display:grid; place-items:center; color:#f7e5ac; filter:drop-shadow(0 1px 5px #44675c66); }
-.orbit-spark-one { top:18px; right:37px; animation:spark-float 2.2s ease-in-out infinite alternate; }
-.orbit-spark-two { bottom:26px; left:28px; animation:spark-float 2.7s .4s ease-in-out infinite alternate-reverse; }
-.intro-content .intro-kicker { margin:0 0 11px; color:#58757a; font-size:9px; letter-spacing:.16em; font-weight:700; text-transform:uppercase; animation:text-rise .65s .55s both; }
+.school-emblem { position:relative; z-index:2; display:grid; place-items:center; width:124px; height:124px; border-radius:50%; background:#ffffff40; box-shadow:0 10px 38px #315c5a26; overflow:hidden; }
+.school-emblem::after { position:absolute; inset:0; z-index:3; content:""; border-radius:50%; background:linear-gradient(135deg,transparent 39%,#ffffffb8 48%,#ffffff45 51%,transparent 60%); background-size:240% 240%; background-position:0 0; pointer-events:none; animation:logo-shine 3.2s ease-in-out infinite; }
+.school-emblem .brand-mark-large { position:relative; z-index:1; width:100%; height:100%; margin:0; background:transparent; box-shadow:none; }
+.intro-content .intro-kicker { margin:0 0 11px; color:#385d63; font-size:12px; letter-spacing:.12em; font-weight:700; text-transform:uppercase; animation:text-rise .65s .55s both; }
 .intro-content h1 { margin:0; color:#193e57; font:800 clamp(36px,6vw,65px)/1.08 var(--display); letter-spacing:-.06em; animation:text-rise .7s .65s both; }
 .intro-content h1 span { display:block; color:#528a89; }
-.intro-content .intro-caption { margin:13px 0 23px; color:#627d81; font-size:13px; animation:text-rise .7s .76s both; }
-.intro-enter { display:inline-flex; align-items:center; gap:17px; border:1px solid #fff; border-radius:40px; padding:13px 18px 13px 21px; background:#fff; color:#355f6d; font-size:11px; font-weight:700; box-shadow:0 7px 25px #3376a51a; cursor:pointer; transition:transform .2s,box-shadow .2s; animation:text-rise .7s .88s both; }
+.intro-content .intro-caption { margin:13px 0 23px; color:#405f64; font-size:16px; animation:text-rise .7s .76s both; }
+.intro-enter { display:inline-flex; align-items:center; gap:17px; border:1px solid #fff; border-radius:40px; padding:14px 20px 14px 23px; background:#fff; color:#355f6d; font-size:15px; font-weight:700; box-shadow:0 7px 25px #3376a51a; cursor:pointer; transition:transform .2s,box-shadow .2s; animation:text-rise .7s .88s both; }
 .intro-enter:hover { transform:translateY(-3px); box-shadow:0 12px 30px #3376a533; }
 .intro-enter svg { color:#578c90; }
-.intro-footnote { position:absolute; z-index:2; bottom:20px; margin:0; color:#f5f8ee; font-size:9px; letter-spacing:.08em; text-shadow:0 1px 5px #273c39; opacity:0; animation:text-rise .65s .95s forwards; }
+.intro-footnote { position:absolute; z-index:2; bottom:20px; margin:0; color:#fff; font-size:12px; letter-spacing:.04em; text-shadow:0 1px 5px #273c39; opacity:0; animation:text-rise .65s .95s forwards; }
 .intro-footnote span { margin-inline:7px; }
 .intro-footnote b { font-weight:700; }
 .transition-flare { position:fixed; z-index:5; left:50%; top:46%; width:14px; height:14px; border-radius:50%; background:#fff9dc; box-shadow:0 0 0 0 #fff8d8,0 0 0 0 #fff8d855; opacity:0; transform:translate(-50%,-50%) scale(.3); pointer-events:none; }
 
-/* The emblem and orbit are separate DOM layers: drop in the school's real badge without redrawing the orbital accents. */
+/* Keep the school emblem independent from the surrounding intro transition. */
 .site-shell.is-revealing { animation:home-iris-open 1.12s cubic-bezier(.76,0,.24,1) both; }
 .intro--transitioning { pointer-events:none; animation:intro-iris-close 1.12s cubic-bezier(.76,0,.24,1) both; }
 .intro--transitioning .intro-logo-stage { animation:brand-launch 950ms cubic-bezier(.16,1,.3,1) both; }
 .intro--transitioning .school-emblem { animation:emblem-launch 880ms cubic-bezier(.16,1,.3,1) both; }
-.intro--transitioning .logo-orbit { animation-duration:850ms; }
 .intro--transitioning .transition-flare { animation:transition-flash 920ms ease-out both; }
 .intro--transitioning .intro-content > :not(.intro-logo-stage) { animation:copy-dissolve 350ms ease both; }
 
@@ -244,9 +232,7 @@
 @keyframes hill-arrive { to { transform:rotate(-5deg) translateY(0); } }
 @keyframes cloud-appear { to { opacity:.82; } }
 @keyframes intro-content-arrive { from { opacity:0; transform:translateY(22px) scale(.98); filter:blur(4px); } to { opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
-@keyframes emblem-breathe { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-5px) rotate(2deg); } }
-@keyframes logo-orbit-rotate { to { transform:translate(-50%,-50%) rotate(360deg); } }
-@keyframes spark-float { to { transform:translateY(-5px) rotate(16deg); opacity:.72; } }
+@keyframes logo-shine { 0%,10% { background-position:0 0; } 80%,100% { background-position:100% 100%; } }
 @keyframes text-rise { from { opacity:0; transform:translateY(11px); } to { opacity:1; transform:translateY(0); } }
 @keyframes intro-iris-close { 0% { opacity:1; clip-path:circle(150% at 50% 45%); filter:brightness(1); } 30% { opacity:1; filter:brightness(1.12); } 100% { opacity:0; clip-path:circle(0% at 50% 45%); filter:brightness(1.5); } }
 @keyframes home-iris-open { 0% { clip-path:circle(0% at 50% 45%); filter:brightness(1.28) saturate(.72); } 65% { filter:brightness(1.04) saturate(.9); } 100% { clip-path:circle(150% at 50% 45%); filter:none; } }
@@ -261,20 +247,15 @@
   .loader-title { font-size:21px; }
   .intro-content { margin-top:22px; padding:20px 16px; }
   .intro-logo-stage { width:160px; height:160px; margin-bottom:9px; }
-  .school-emblem { width:88px; height:88px; }
-  .school-emblem .brand-mark-large { width:58px; height:58px; }
-  .orbit-outer { width:154px; height:94px; }
-  .orbit-inner { width:132px; height:132px; }
-  .orbit-spark-one { top:13px; right:29px; }
-  .orbit-spark-two { bottom:19px; left:23px; }
-  .intro-content .intro-kicker { font-size:7px; }
+  .school-emblem { width:112px; height:112px; }
+  .intro-content .intro-kicker { font-size:10px; }
   .intro-content h1 { font-size:clamp(34px,10vw,43px); }
-  .intro-content .intro-caption { font-size:11px; }
-  .intro-footnote { bottom:15px; font-size:7px; }
+  .intro-content .intro-caption { font-size:14px; }
+  .intro-footnote { bottom:15px; font-size:10px; }
 }
 
 @media (prefers-reduced-motion:reduce) {
-  .splash-loader,.brand-intro,.loader-sun,.loader-horizon,.loader-spark,.loader-ground span,.loader-ring,.intro-sun,.intro-cloud,.intro-hill,.school-emblem,.logo-orbit,.orbit-spark,.intro-content,.intro-kicker,.intro-caption,.intro-enter,.intro-footnote,.site-shell.is-revealing,.intro--transitioning,.transition-flare { animation-duration:.01ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
+  .splash-loader,.brand-intro,.loader-sun,.loader-horizon,.loader-spark,.loader-ground span,.loader-ring,.intro-sun,.intro-cloud,.intro-hill,.school-emblem,.intro-content,.intro-kicker,.intro-caption,.intro-enter,.intro-footnote,.site-shell.is-revealing,.intro--transitioning,.transition-flare { animation-duration:.01ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
   .site-shell.is-revealing { clip-path:none; }
   .intro--transitioning { clip-path:circle(0% at 50% 45%); }
 }

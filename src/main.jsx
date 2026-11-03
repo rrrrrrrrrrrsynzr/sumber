@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowDown,
@@ -11,7 +11,6 @@ import {
   Menu,
   RotateCcw,
   Send,
-  Sparkles,
   Star,
   Sun,
   X,
@@ -22,8 +21,10 @@ import './content-layout.css';
 import './feedback.css';
 import './source-references.css';
 import './dev-feedback.css';
+import './exhibition-readability.css';
 import { submitFeedback } from './feedback-service.js';
 import DevFeedback from './DevFeedback.jsx';
+const DryerModel3D = lazy(() => import('./DryerModel3D.jsx'));
 
 const asset = (filename) => `${import.meta.env.BASE_URL}assets/${filename}`;
 
@@ -54,7 +55,7 @@ const photos = [
 function BrandMark({ large = false }) {
   return (
     <span className={`brand-mark${large ? ' brand-mark-large' : ''}`} aria-hidden="true">
-      <span className="brand-mark-center"><Leaf size={large ? 34 : 18} strokeWidth={1.6} /></span>
+      <object data={asset('pradnyasiwi.svg')} type="image/svg+xml" aria-label="Logo SMP Negeri 4 Pakem" tabIndex={-1} />
     </span>
   );
 }
@@ -84,11 +85,17 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div', ...props
 function LoadingScreen({ onComplete }) {
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const timer = window.setTimeout(onComplete, reducedMotion ? 120 : 650);
+    const timer = window.setTimeout(onComplete, reducedMotion ? 500 : 1400);
     return () => window.clearTimeout(timer);
   }, [onComplete]);
 
-  return <div className="blank-loading" aria-hidden="true" />;
+  return (
+    <div className="blank-loading" role="status" aria-live="polite">
+      <object data={asset('pradnyasiwi.svg')} type="image/svg+xml" aria-label="Logo SMP Negeri 4 Pakem" tabIndex={-1} />
+      <p className="loading-title">Menyiapkan pameran…</p>
+      <p className="loading-fact"><b>Tahukah kamu?</b> Gabah dikeringkan setelah panen agar lebih awet saat disimpan.</p>
+    </div>
+  );
 }
 
 function Intro({ onEnter, transitioning }) {
@@ -108,11 +115,7 @@ function Intro({ onEnter, transitioning }) {
       <div className="intro-scenery" aria-hidden="true"><span className="intro-sun" /><span className="intro-sun-glow" /><span className="intro-hill hill-back" /><span className="intro-hill hill-front" /><span className="intro-cloud cloud-one" /><span className="intro-cloud cloud-two" /><span className="intro-grass grass-one" /><span className="intro-grass grass-two" /></div>
       <div className="intro-content">
         <div className="intro-logo-stage">
-          <span className="logo-orbit orbit-outer" aria-hidden="true"><i /></span>
-          <span className="logo-orbit orbit-inner" aria-hidden="true"><i /></span>
-          <span className="orbit-spark orbit-spark-one" aria-hidden="true"><Sparkles size={13} /></span>
-          <span className="orbit-spark orbit-spark-two" aria-hidden="true"><Sun size={12} /></span>
-          <div className="school-emblem" aria-label="Logo ilustrasi Pradnyasiwi Quadtech"><BrandMark large /><span className="emblem-highlight" /></div>
+          <div className="school-emblem"><BrandMark large /></div>
         </div>
         <p className="intro-kicker">SMP NEGERI 4 PAKEM MEMPERSEMBAHKAN</p>
         <h1>Pradnyasiwi <span>Quadtech</span></h1>
@@ -176,79 +179,42 @@ function ProjectSummary() {
 }
 
 function Model3DSection() {
-  const [rotation, setRotation] = useState(-28);
-  const [tilt, setTilt] = useState(8);
-  const dragStart = useRef(null);
-  const modelObject = useRef(null);
-  const dragFrame = useRef(0);
-  const pendingPointer = useRef(null);
-  const startDrag = (event) => {
-    if (event.button !== undefined && event.button !== 0) return;
-    dragStart.current = { x: event.clientX, y: event.clientY, rotation, tilt };
-    event.currentTarget.classList.add('is-dragging');
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-  };
-  const dragModel = (event) => {
-    if (!dragStart.current) return;
-    pendingPointer.current = { x: event.clientX, y: event.clientY };
-    if (dragFrame.current) return;
-    dragFrame.current = window.requestAnimationFrame(() => {
-      dragFrame.current = 0;
-      if (!dragStart.current || !pendingPointer.current || !modelObject.current) return;
-      const nextRotation = dragStart.current.rotation + (pendingPointer.current.x - dragStart.current.x) * .8;
-      const nextTilt = Math.max(-12, Math.min(20, dragStart.current.tilt - (pendingPointer.current.y - dragStart.current.y) * .42));
-      modelObject.current.style.setProperty('--model-yaw', `${nextRotation}deg`);
-      modelObject.current.style.setProperty('--model-tilt', `${nextTilt}deg`);
-    });
-  };
-  const endDrag = () => {
-    if (!dragStart.current) return;
-    if (dragFrame.current) window.cancelAnimationFrame(dragFrame.current);
-    dragFrame.current = 0;
-    modelObject.current?.closest('.model-stage')?.classList.remove('is-dragging');
-    if (pendingPointer.current && modelObject.current) {
-      const nextRotation = dragStart.current.rotation + (pendingPointer.current.x - dragStart.current.x) * .8;
-      const nextTilt = Math.max(-12, Math.min(20, dragStart.current.tilt - (pendingPointer.current.y - dragStart.current.y) * .42));
-      setRotation(nextRotation);
-      setTilt(nextTilt);
-    }
-    dragStart.current = null;
-    pendingPointer.current = null;
-  };
-  const resetModel = () => { setRotation(-28); setTilt(8); };
-  useEffect(() => () => {
-    if (dragFrame.current) window.cancelAnimationFrame(dragFrame.current);
-  }, []);
+  const controlsRef = useRef(null);
+  const sectionRef = useRef(null);
+  const [modelReady, setModelReady] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || modelReady) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setModelReady(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '240px 0px' });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [modelReady]);
 
   return (
-    <section className="model-section" id="model">
+    <section className="model-section" id="model" ref={sectionRef}>
       <div className="section-wrap model-layout">
         <Reveal className="model-copy">
           <p className="eyebrow">MODEL INTERAKTIF · KONSEP</p>
           <h2>Lihat dari<br /><span>sudut pandangmu.</span></h2>
-          <p>Seret model untuk memutar dan melihat ilustrasi konsep alat. Ini visualisasi awal, bukan gambar teknik atau model final.</p>
+          <p>Seret model untuk melihat konsep penjemur padi dari berbagai sisi. Bentuk ini masih ilustrasi awal dan akan disesuaikan setelah foto prototipe tersedia.</p>
           <div className="model-controls">
-            <button type="button" onClick={() => setRotation((value) => value - 35)} aria-label="Putar model ke kiri">Putar kiri</button>
-            <button type="button" onClick={() => setRotation((value) => value + 35)} aria-label="Putar model ke kanan">Putar kanan</button>
-            <button type="button" className="model-reset" onClick={resetModel} aria-label="Kembalikan sudut model"><RotateCcw size={14} /> Reset</button>
+            <button type="button" className="model-reset" onClick={() => controlsRef.current?.reset()} aria-label="Kembalikan sudut model"><RotateCcw size={14} /> Atur ulang sudut</button>
           </div>
           <p className="model-disclaimer"><CircleHelp size={14} /> Bentuk, ukuran, dan komponen masih perlu disesuaikan dengan prototipe sebenarnya.</p>
         </Reveal>
         <Reveal className="model-viewer" delay={110}>
           <div className="model-viewer-top"><span><i /> PRADNYASIWI / STUDI KONSEP</span><span>3D · 01</span></div>
-          <div className="model-stage" onPointerDown={startDrag} onPointerMove={dragModel} onPointerUp={endDrag} onPointerCancel={endDrag} role="img" aria-label="Model 3D konseptual penjemur padi otomatis, dapat diputar dengan menyeret">
-            <div className="model-sun-disc"><Sun size={36} strokeWidth={1.1} /></div>
-            <div className="model-cloud cloud-a" /><div className="model-cloud cloud-b" />
-            <div className="model-platform" />
-            <div ref={modelObject} className="model-object" style={{ '--model-yaw': `${rotation}deg`, '--model-tilt': `${tilt}deg` }}>
-              <div className="model-roof"><span /><span /><span /><span /></div>
-              <div className="model-chamber"><div className="model-window"><i /><i /><i /><i /></div><div className="model-side-vent"><i /><i /><i /></div><div className="model-control-panel"><i /><i /><i /></div></div>
-              <div className="model-stand stand-one" /><div className="model-stand stand-two" /><div className="model-stand stand-three" /><div className="model-stand stand-four" />
-              <div className="model-wheel wheel-a" /><div className="model-wheel wheel-b" /><div className="model-wheel wheel-c" /><div className="model-wheel wheel-d" />
-            </div>
-            <span className="model-axis axis-x">X</span><span className="model-axis axis-y">Y</span><span className="model-axis axis-z">Z</span>
-            <div className="model-drag-hint"><span>↔</span> SERET UNTUK MEMUTAR</div>
-          </div>
+          {modelReady ? (
+            <Suspense fallback={<div className="model-stage model-stage-loading" role="status">Menyiapkan model 3D…</div>}>
+              <DryerModel3D controlsRef={controlsRef} />
+            </Suspense>
+          ) : <div className="model-stage model-stage-loading" role="status">Model 3D siap diputar di bagian ini.</div>}
           <div className="model-viewer-foot"><span>Penjemur padi otomatis</span><span>VISUALISASI KONSEP</span></div>
         </Reveal>
       </div>
@@ -323,7 +289,7 @@ function TeamSection() {
       <div className="section-wrap team-layout">
         <Reveal className="team-copy"><p className="eyebrow">DI BALIK GAGASAN</p><h2>Kenalkan,<br /><span>tim kami.</span></h2><p>Sebuah proyek STEM dari siswa SMPN 4 Pakem yang dikerjakan bersama oleh tim Pradnyasiwi Quadtech.</p></Reveal>
         <Reveal className="team-card" delay={90}>
-          <div className="team-emblem"><Leaf size={27} /></div>
+          <div className="team-emblem"><BrandMark /></div>
           <div><p className="team-label">NAMA KELOMPOK</p><h3>Pradnyasiwi<br />Quadtech</h3></div>
           <div className="team-divider" />
           <div className="team-school"><span>SMPN 4 PAKEM</span><small>Pakem · Sleman · Yogyakarta</small></div>

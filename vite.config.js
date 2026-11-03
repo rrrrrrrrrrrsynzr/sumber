@@ -12,7 +12,7 @@ const copyStaticProjectFiles = {
   apply: 'build',
   closeBundle() {
     const output = join(root, 'dist');
-    ['sawah-pagi.svg', 'lahan-padi.svg', 'ruang-ide.svg'].forEach((filename) => {
+    ['sawah-pagi.svg', 'lahan-padi.svg', 'ruang-ide.svg', 'pradnyasiwi.svg'].forEach((filename) => {
       const source = join(root, 'assets', filename);
       if (existsSync(source)) cpSync(source, join(output, 'assets', filename));
     });
